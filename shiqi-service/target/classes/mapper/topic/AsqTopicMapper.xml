@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqTopicMapper">
+
+    <resultMap type="AsqTopic" id="AsqTopicResult">
+        <result property="topicId" column="topic_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="topicName" column="topic_name"/>
+        <result property="topicContent" column="topic_content"/>
+        <result property="topicCover" column="topic_cover"/>
+        <result property="topicCreatedate" column="topic_createdate"/>
+    </resultMap>
+
+    <sql id="selectAsqTopicVo">
+        select topic_id, user_id, topic_name, topic_content, topic_cover, topic_createdate
+        from asq_topic
+    </sql>
+
+    <select id="selectAsqTopicList" parameterType="AsqTopic" resultMap="AsqTopicResult">
+        <include refid="selectAsqTopicVo"/>
+        <where>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="topicId != null ">and topic_id = #{topicId}</if>
+            <if test="topicName != null  and topicName != ''">and topic_name like concat('%', #{topicName}, '%')</if>
+            <if test="params.beginTopicCreatedate != null and params.beginTopicCreatedate != '' and params.endTopicCreatedate != null and params.endTopicCreatedate != ''">
+                and topic_createdate between #{params.beginTopicCreatedate} and #{params.endTopicCreatedate}
+            </if>
+        </where>
+        order by topic_createdate DESC
+    </select>
+
+    <select id="selectAsqTopicByTopicId" parameterType="Long" resultMap="AsqTopicResult">
+        <include refid="selectAsqTopicVo"/>
+        where topic_id = #{topicId}
+    </select>
+
+    <insert id="insertAsqTopic" parameterType="AsqTopic" useGeneratedKeys="true" keyProperty="topicId">
+        insert into asq_topic
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">user_id,</if>
+            <if test="topicName != null">topic_name,</if>
+            <if test="topicContent != null">topic_content,</if>
+            <if test="topicCover != null">topic_cover,</if>
+            <if test="topicCreatedate != null">topic_createdate,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">#{userId},</if>
+            <if test="topicName != null">#{topicName},</if>
+            <if test="topicContent != null">#{topicContent},</if>
+            <if test="topicCover != null">#{topicCover},</if>
+            <if test="topicCreatedate != null">#{topicCreatedate},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAsqTopic" parameterType="AsqTopic">
+        update asq_topic
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="topicName != null">topic_name = #{topicName},</if>
+            <if test="topicContent != null">topic_content = #{topicContent},</if>
+            <if test="topicCover != null">topic_cover = #{topicCover},</if>
+            <if test="topicCreatedate != null">topic_createdate = #{topicCreatedate},</if>
+        </trim>
+        where topic_id = #{topicId}
+    </update>
+
+    <delete id="deleteAsqTopicByTopicId" parameterType="Long">
+        delete
+        from asq_topic
+        where topic_id = #{topicId}
+    </delete>
+
+    <delete id="deleteAsqTopicByTopicIds" parameterType="String">
+        delete from asq_topic where topic_id in
+        <foreach item="topicId" collection="array" open="(" separator="," close=")">
+            #{topicId}
+        </foreach>
+    </delete>
+</mapper>

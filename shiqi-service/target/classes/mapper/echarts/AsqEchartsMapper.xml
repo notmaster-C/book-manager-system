@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqEchartsMapper">
+
+    <select id="bookRank" resultType="com.ruoyi.domain.echarts.AsqBookRank">
+        SELECT
+            ab.book_name bookName,
+            arp.rank_parm_id rankParmId,
+            arp.book_id bookId,
+            arp.applaud_num applaudNum,
+            arp.collect_num collectNum,
+            arp.comment_num commentNum,
+            arp.read_num readNum
+        FROM
+            asq_rank_parm arp
+                LEFT JOIN asq_books ab ON arp.book_id = ab.book_id
+        ORDER BY
+            (
+                    arp.read_num * 0.2 + arp.applaud_num * 0.3 + arp.comment_num * 0.2 + arp.collect_num * 0.3
+                ) DESC
+        LIMIT 6
+    </select>
+</mapper>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqCollectMapper">
+
+    <resultMap type="AsqCollect" id="AsqCollectResult">
+        <result property="collectId"    column="collect_id"    />
+        <result property="bookId"    column="book_id"    />
+        <result property="userId"    column="user_id"    />
+        <result property="createDate"    column="create_date"    />
+    </resultMap>
+    <resultMap type="AsqCollectAndBookInfoVo" id="AsqCollectAndBookInfoVoResult">
+        <result property="bookId" column="book_id"/>
+        <result property="bookWriterName" column="book_writer_name"/>
+        <result property="bookName" column="book_name"/>
+        <result property="bookType" column="book_type"/>
+        <result property="bookPubDate" column="book_pub_date"/>
+        <result property="bookUpDate" column="book_up_date"/>
+        <result property="bookPress" column="book_press"/>
+        <result property="bookCover" column="book_cover"/>
+        <result property="bookPdfUrl" column="book_pdf_url"/>
+        <result property="bookAudit" column="book_audit"/>
+        <result property="createDate"    column="create_date"    />
+    </resultMap>
+
+    <sql id="selectAsqCollectVo">
+        select collect_id, book_id, user_id, create_date from asq_collect
+    </sql>
+
+    <select id="selectAsqCollectList" parameterType="AsqCollect" resultMap="AsqCollectResult">
+        <include refid="selectAsqCollectVo"/>
+        <where>
+            <if test="bookId != null "> and book_id = #{bookId}</if>
+            <if test="userId != null "> and user_id = #{userId}</if>
+            <if test="createDate != null "> and create_date = #{createDate}</if>
+        </where>
+    </select>
+
+    <select id="selectAsqCollectByCollectId" parameterType="Long" resultMap="AsqCollectResult">
+        <include refid="selectAsqCollectVo"/>
+        where collect_id = #{collectId}
+    </select>
+
+    <select id="selectAsqCollectAndBookInfoList" resultMap="AsqCollectAndBookInfoVoResult">
+        SELECT
+        b.*, a.create_date
+        FROM
+        asq_collect a
+        LEFT JOIN asq_books b ON a.book_id = b.book_id
+        <where>
+            <if test="userId != null "> and a.user_id = #{userId}</if>
+        </where>
+        ORDER BY a.create_date DESC
+    </select>
+
+    <insert id="insertAsqCollect" parameterType="AsqCollect" useGeneratedKeys="true" keyProperty="collectId">
+        insert into asq_collect
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">book_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="createDate != null">create_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="bookId != null">#{bookId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="createDate != null">#{createDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAsqCollect" parameterType="AsqCollect">
+        update asq_collect
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="bookId != null">book_id = #{bookId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+        </trim>
+        where collect_id = #{collectId}
+    </update>
+
+    <delete id="deleteAsqCollectByCollectId" parameterType="Long">
+        delete from asq_collect where collect_id = #{collectId}
+    </delete>
+
+    <delete id="deleteAsqCollectByCollectIds" parameterType="String">
+        delete from asq_collect where collect_id in
+        <foreach item="collectId" collection="array" open="(" separator="," close=")">
+            #{collectId}
+        </foreach>
+    </delete>
+</mapper>
