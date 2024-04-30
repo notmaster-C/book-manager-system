@@ -1,269 +1,197 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.ruoyi</groupId>
-    <artifactId>ruoyi</artifactId>
-    <version>3.7.0</version>
-
-    <name>ruoyi</name>
-    <url>http://www.ruoyi.vip</url>
-    <description>拾柒图书管理系统</description>
-
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.8</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.book.backend</groupId>
+    <artifactId>vue_book_backend</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>vue_book_backend</name>
+    <description>vue_book_backend</description>
     <properties>
-        <ruoyi.version>3.7.0</ruoyi.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
-        <maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
-        <druid.version>1.2.6</druid.version>
-        <bitwalker.version>1.21</bitwalker.version>
-        <swagger.version>3.0.0</swagger.version>
-		<kaptcha.version>2.3.2</kaptcha.version>
-		<mybatis-spring-boot.version>2.1.4</mybatis-spring-boot.version>
-        <pagehelper.boot.version>1.3.1</pagehelper.boot.version>
-        <!--Fastjson 1.2.83 之前版本存在安全漏洞，该漏洞源于容易绕过默认的 autoType 关闭限制来反序列化不受信任的数据，攻击者利用该漏洞可以攻击远程服务器。
-noneautotype版本不受影响，请忽略-->
-        <fastjson.version>1.2.83</fastjson.version>
-        <oshi.version>5.8.0</oshi.version>
-        <jna.version>5.8.0</jna.version>
-        <commons.io.version>2.11.0</commons.io.version>
-        <!--1.5 之前版本中，由于 Apache Commons FileUpload 在处理用户的文件上传请求时未对文件数量进行限制，攻击者可通过上传大量文件造成拒绝服务。-->
-        <commons.fileupload.version>1.5</commons.fileupload.version>
-        <commons.collections.version>3.2.2</commons.collections.version>
-        <poi.version>4.1.2</poi.version>
-        <velocity.version>1.7</velocity.version>
-        <jwt.version>0.9.1</jwt.version>
     </properties>
-
-    <!-- 依赖声明 -->
-    <dependencyManagement>
-        <dependencies>
-
-            <!-- SpringBoot的依赖配置-->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>2.2.13.RELEASE</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
-            <!-- 阿里数据库连接池 -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>druid-spring-boot-starter</artifactId>
-                <version>${druid.version}</version>
-            </dependency>
-
-            <!-- 解析客户端操作系统、浏览器等 -->
-            <dependency>
-                <groupId>eu.bitwalker</groupId>
-                <artifactId>UserAgentUtils</artifactId>
-                <version>${bitwalker.version}</version>
-            </dependency>
-
-            <!-- SpringBoot集成mybatis框架 -->
-            <dependency>
-                <groupId>org.mybatis.spring.boot</groupId>
-                <artifactId>mybatis-spring-boot-starter</artifactId>
-                <version>${mybatis-spring-boot.version}</version>
-            </dependency>
-
-            <!-- pagehelper 分页插件 -->
-            <dependency>
-                <groupId>com.github.pagehelper</groupId>
-                <artifactId>pagehelper-spring-boot-starter</artifactId>
-                <version>${pagehelper.boot.version}</version>
-            </dependency>
-
-            <!-- 获取系统信息 -->
-            <dependency>
-                <groupId>com.github.oshi</groupId>
-                <artifactId>oshi-core</artifactId>
-                <version>${oshi.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.java.dev.jna</groupId>
-                <artifactId>jna</artifactId>
-                <version>${jna.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>net.java.dev.jna</groupId>
-                <artifactId>jna-platform</artifactId>
-                <version>${jna.version}</version>
-            </dependency>
-
-            <!-- Swagger3依赖 -->
-            <dependency>
-                <groupId>io.springfox</groupId>
-                <artifactId>springfox-boot-starter</artifactId>
-                <version>${swagger.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>io.swagger</groupId>
-                        <artifactId>swagger-models</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- io常用工具类 -->
-            <dependency>
-                <groupId>commons-io</groupId>
-                <artifactId>commons-io</artifactId>
-                <version>${commons.io.version}</version>
-            </dependency>
-
-            <!-- 文件上传工具类 -->
-            <dependency>
-                <groupId>commons-fileupload</groupId>
-                <artifactId>commons-fileupload</artifactId>
-                <version>${commons.fileupload.version}</version>
-            </dependency>
-
-            <!-- excel工具 -->
-            <dependency>
-                <groupId>org.apache.poi</groupId>
-                <artifactId>poi-ooxml</artifactId>
-                <version>${poi.version}</version>
-            </dependency>
-
-            <!-- velocity代码生成使用模板 -->
-            <dependency>
-                <groupId>org.apache.velocity</groupId>
-                <artifactId>velocity</artifactId>
-                <version>${velocity.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-collections</groupId>
-                        <artifactId>commons-collections</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-
-            <!-- collections工具类 -->
-            <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons.collections.version}</version>
-            </dependency>
-
-            <!-- 阿里JSON解析器 -->
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
-
-            <!-- Token生成与解析-->
-            <dependency>
-                <groupId>io.jsonwebtoken</groupId>
-                <artifactId>jjwt</artifactId>
-                <version>${jwt.version}</version>
-            </dependency>
-
-            <!-- 验证码 -->
-            <dependency>
-                <groupId>com.github.penggle</groupId>
-                <artifactId>kaptcha</artifactId>
-                <version>${kaptcha.version}</version>
-            </dependency>
-
-
-
-            <!-- 核心模块-->
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-framework</artifactId>
-                <version>${ruoyi.version}</version>
-            </dependency>
-
-            <!-- 系统模块-->
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-system</artifactId>
-                <version>${ruoyi.version}</version>
-            </dependency>
-
-            <!-- 通用工具-->
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>ruoyi-common</artifactId>
-                <version>${ruoyi.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>shiqi-service</artifactId>
-                <version>${ruoyi.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>com.ruoyi</groupId>
-                <artifactId>shiqi-public-service</artifactId>
-                <version>${ruoyi.version}</version>
-            </dependency>
-
-        </dependencies>
-    </dependencyManagement>
-
-    <modules>
-        <module>ruoyi-admin</module>
-        <module>ruoyi-framework</module>
-        <module>ruoyi-system</module>
-        <module>ruoyi-common</module>
-        <module>shiqi-service</module>
-        <module>shiqi-public-service</module>
-    </modules>
-    <packaging>pom</packaging>
-
-
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.23</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>3.5.1</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <!-- https://mvnrepository.com/artifact/com.alibaba/fastjson -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.67</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.google.code.gson/gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.8.5</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.java-websocket/Java-WebSocket -->
+        <dependency>
+            <groupId>org.java-websocket</groupId>
+            <artifactId>Java-WebSocket</artifactId>
+            <version>1.3.8</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp -->
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.10.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.squareup.okio/okio -->
+        <dependency>
+            <groupId>com.squareup.okio</groupId>
+            <artifactId>okio</artifactId>
+            <version>2.10.0</version>
+        </dependency>
+        <!--        hutool工具包-->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.11</version>
+        </dependency>
+        <!--knife4j依赖导入-->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup  Java爬虫-->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.15.3</version>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-lang3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <!-- https://github.com/alibaba/easyexcel -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.yucongming</groupId>
+            <artifactId>yucongming-java-sdk</artifactId>
+            <version>0.0.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.1-jre</version>
+        </dependency>
+        <!-- https://github.com/redisson/redisson#quick-start -->
+        <dependency>
+            <groupId>org.redisson</groupId>
+            <artifactId>redisson</artifactId>
+            <version>3.21.3</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+<!--        阿里云AI模型-->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>broadscope-bailian-sdk-java</artifactId>
+            <version>1.1.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-websocket</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>1.23</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>1.23</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>2.7.4</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
                 </configuration>
             </plugin>
         </plugins>
+        <finalName>my-app</finalName> <!-- 设置打包后的JAR文件名 -->
     </build>
 
-    <repositories>
-        <repository>
-            <id>public</id>
-            <name>aliyun nexus</name>
-            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-        </repository>
-    </repositories>
+    <profiles>
 
-    <pluginRepositories>
-        <pluginRepository>
-            <id>public</id>
-            <name>aliyun nexus</name>
-            <url>http://maven.aliyun.com/nexus/content/groups/public/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </pluginRepository>
-    </pluginRepositories>
+    </profiles>
 
 </project>
