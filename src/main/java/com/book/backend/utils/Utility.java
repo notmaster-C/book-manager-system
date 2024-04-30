@@ -173,13 +173,17 @@ public class Utility {
 
             //如果line.length=0, 即用户没有输入任何内容，直接回车
             if (line.length() == 0) {
-                if (blankReturn) return line;//如果blankReturn=true,可以返回空串
-                else continue; //如果blankReturn=false,不接受空串，必须输入内容
+                if (blankReturn){
+                    return line;//如果blankReturn=true,可以返回空串
+                }
+                else {
+                    continue; //如果blankReturn=false,不接受空串，必须输入内容
+                }
             }
 
             //如果用户输入的内容大于了 limit，就提示重写输入
             //如果用户如的内容 >0 <= limit ,我就接受
-            if (line.length() < 1 || line.length() > limit) {
+            if ( line.length() > limit) {
                 System.out.print("输入长度（不能大于" + limit + "）错误，请重新输入：");
                 continue;
             }

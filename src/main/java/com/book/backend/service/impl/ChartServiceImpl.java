@@ -9,6 +9,7 @@ import com.book.backend.common.exception.ThrowUtils;
 import com.book.backend.manager.AiManager;
 import com.book.backend.manager.GuavaRateLimiterManager;
 import com.book.backend.manager.SparkAIManager;
+import com.book.backend.mapper.ChartMapper;
 import com.book.backend.pojo.Admins;
 import com.book.backend.pojo.Chart;
 import com.book.backend.pojo.UserInterfaceInfo;
@@ -16,7 +17,6 @@ import com.book.backend.pojo.dto.chart.GenChartByAiRequest;
 import com.book.backend.pojo.vo.BiResponse;
 import com.book.backend.service.AdminsService;
 import com.book.backend.service.ChartService;
-import com.book.backend.mapper.ChartMapper;
 import com.book.backend.utils.ExcelUtils;
 import com.google.gson.Gson;
 import org.apache.commons.lang3.StringUtils;
@@ -26,26 +26,27 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
-* @author xiaobaitiao
-* @description 针对表【t_chart(图表信息表)】的数据库操作Service实现
-* @createDate 2023-08-30 11:05:22
-*/
+ * @author xiaobaitiao
+ * @description 针对表【t_chart(图表信息表)】的数据库操作Service实现
+ * @createDate 2023-08-30 11:05:22
+ */
 @Service
 public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
-    implements ChartService{
+        implements ChartService {
     @Resource
     private AdminsService adminsService;
     @Resource
     private AiManager aiManager;
     @Resource
-    private  GuavaRateLimiterManager guavaRateLimiterManager;
+    private GuavaRateLimiterManager guavaRateLimiterManager;
     @Resource
     private UserInterfaceInfoServiceImpl userInterfaceInfoService;
+    private static  final String pattern1 = "option = ([^;]+);";
+
     // region
 //    @Override 旧版本AI
 //    public R<BiResponse> genChartByAi(MultipartFile multipartFile, GenChartByAiRequest genChartByAiRequest) {
@@ -179,19 +180,19 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         Admins admin = adminsService.getById(genChartByAiRequest.getAdminId());
         LambdaQueryWrapper<UserInterfaceInfo> queryWrapper = new LambdaQueryWrapper<>();
         // 功能做限制，用户只能调用AI接口聊天，管理员只能调用图表生成，这边用管理员ID
-        queryWrapper.eq(UserInterfaceInfo::getUserId,admin.getAdminId());
+        queryWrapper.eq(UserInterfaceInfo::getUserId, admin.getAdminId());
         UserInterfaceInfo interfaceInfo = userInterfaceInfoService.getOne(queryWrapper);
-        if(interfaceInfo == null){
+        if (interfaceInfo == null) {
             return R.error("该接口已废弃");
         }
         Integer leftNum = interfaceInfo.getLeftNum();
         Integer totalNum = interfaceInfo.getTotalNum();
-        if(leftNum<=0){
+        if (leftNum <= 0) {
             return R.error("AI接口次数不足，请明天再来");
         }
         // 限流判断，每个管理员一个限流器
         boolean limit = guavaRateLimiterManager.doRateLimit(admin.getAdminId());
-        if(!limit){
+        if (!limit) {
             return R.error("请求次数过多，请稍后重试");
         }
         // 用户输入
@@ -204,7 +205,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
                 "【【【【【\n" +
                 "{前端 Echarts V5 的 option 配置对象js代码，合理地将数据进行可视化，不要生成任何多余的内容，比如注释}\n" +
                 "【【【【【\n" +
-                "{明确的数据分析结论、越详细越好，不要生成多余的注释}"+"\n";
+                "{明确的数据分析结论、越详细越好，不要生成多余的注释}" + "\n";
         // 构造用户输入
         StringBuilder userInput = new StringBuilder();
         userInput.append(prompt);
@@ -215,14 +216,14 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
             userGoal += "，请使用" + chartType;
         }
         userInput.append("分析目标：").append(userGoal).append("\n");
-        userInput.append("分析需求："+userGoal+"\n");
-        userInput.append("原始数据: "+"\n");
+        userInput.append("分析需求：" + userGoal + "\n");
+        userInput.append("原始数据: " + "\n");
         String csvData = ExcelUtils.excelToCsv(multipartFile);
         userInput.append(csvData).append("\n");
         String result;
         SparkAIManager sparkAIManager = new SparkAIManager(genChartByAiRequest.getAdminId() + "", false);
         try {
-            result = sparkAIManager.sendMessageAndGetResponse(userInput.toString(),25);
+            result = sparkAIManager.sendMessageAndGetResponse(userInput.toString(), 25);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -230,12 +231,12 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         if (splits.length < 3) {
             return R.error("AI生成错误，请稍后重试");
         }
-        Pattern pattern = Pattern.compile("option = ([^;]+);");
+        Pattern pattern = Pattern.compile(pattern1);
         Matcher matcher = pattern.matcher(splits[1]);
         String genChart = "";
         if (matcher.find()) {
             genChart = matcher.group(1).trim();
-        }else{
+        } else {
             return R.error("AI生成错误，请稍后重试");
         }
         String genResult = splits[2].split("}")[1].trim();
@@ -253,10 +254,10 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         boolean saveResult = this.save(chart);
         ThrowUtils.throwIf(!saveResult, ErrorCode.SYSTEM_ERROR, "图表保存失败");
         // 更新调用接口的次数 剩余接口调用次数-1.总共调用次数+1
-        interfaceInfo.setLeftNum(leftNum-1);
-        interfaceInfo.setTotalNum(totalNum+1);
+        interfaceInfo.setLeftNum(leftNum - 1);
+        interfaceInfo.setTotalNum(totalNum + 1);
         boolean update = userInterfaceInfoService.updateById(interfaceInfo);
-        if(!update){
+        if (!update) {
             return R.error("调用接口失败");
         }
         BiResponse biResponse = new BiResponse();
@@ -264,7 +265,7 @@ public class ChartServiceImpl extends ServiceImpl<ChartMapper, Chart>
         biResponse.setGenResult(genResult);
         biResponse.setChartId(chart.getId());
         R<BiResponse> resultData = new R<>();
-        resultData.add("genChart",objectChart);
+        resultData.add("genChart", objectChart);
         resultData.setData(biResponse);
         resultData.setMsg("图表生成成功");
         resultData.setStatus(200);
