@@ -1,0 +1,9 @@
+python-dotenv
+mysql-connector-python
+gpt_index
+langchain
+requests
+urllib3
+flask
+flask-cors
+openai

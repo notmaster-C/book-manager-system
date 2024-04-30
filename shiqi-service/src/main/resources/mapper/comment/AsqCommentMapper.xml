@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.mapper.AsqCommentMapper">
+
+    <resultMap type="AsqComment" id="AsqCommentResult">
+        <result property="commentId" column="comment_id"/>
+        <result property="commentParentId" column="comment_parent_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="comBodyId" column="com_body_id"/>
+        <result property="commentText" column="comment_text"/>
+        <result property="comBodyType" column="com_body_type"/>
+        <result property="createDate" column="create_date"/>
+        <result property="likeNum" column="like_num"/>
+        <result property="isVio" column="is_vio"/>
+    </resultMap>
+
+    <sql id="selectAsqCommentVo">
+        select comment_id,
+               comment_parent_id,
+               user_id,
+               com_body_id,
+               comment_text,
+               com_body_type,
+               create_date,
+               like_num,
+               is_vio
+        from asq_comment
+    </sql>
+
+    <select id="selectAsqCommentList" parameterType="AsqComment" resultMap="AsqCommentResult">
+        <include refid="selectAsqCommentVo"/>
+        <where>
+            <if test="commentParentId != null ">and comment_parent_id = #{commentParentId}</if>
+            <if test="userId != null ">and user_id = #{userId}</if>
+            <if test="comBodyId != null ">and com_body_id = #{comBodyId}</if>
+            <if test="commentText != null  and commentText != ''">and comment_text like concat('%', #{commentText},
+                '%')
+            </if>
+            <if test="comBodyType != null ">and com_body_type = #{comBodyType}</if>
+            <if test="params.beginCreateDate != null and params.beginCreateDate != '' and params.endCreateDate != null and params.endCreateDate != ''">
+                and create_date between #{params.beginCreateDate} and #{params.endCreateDate}
+            </if>
+            <if test="likeNum != null ">and like_num = #{likeNum}</if>
+            <if test="isVio != null ">and is_vio = #{isVio}</if>
+        </where>
+    </select>
+
+    <select id="selectAsqCommentByCommentId" parameterType="Long" resultMap="AsqCommentResult">
+        <include refid="selectAsqCommentVo"/>
+        where comment_id = #{commentId}
+    </select>
+
+    <insert id="insertAsqComment" parameterType="AsqComment" useGeneratedKeys="true" keyProperty="commentId">
+        insert into asq_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="commentParentId != null">comment_parent_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="comBodyId != null">com_body_id,</if>
+            <if test="commentText != null">comment_text,</if>
+            <if test="comBodyType != null">com_body_type,</if>
+            <if test="createDate != null">create_date,</if>
+            <if test="likeNum != null">like_num,</if>
+            <if test="isVio != null">is_vio,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="commentParentId != null">#{commentParentId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="comBodyId != null">#{comBodyId},</if>
+            <if test="commentText != null">#{commentText},</if>
+            <if test="comBodyType != null">#{comBodyType},</if>
+            <if test="createDate != null">#{createDate},</if>
+            <if test="likeNum != null">#{likeNum},</if>
+            <if test="isVio != null">#{isVio},</if>
+        </trim>
+    </insert>
+
+    <update id="updateAsqComment" parameterType="AsqComment">
+        update asq_comment
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="commentParentId != null">comment_parent_id = #{commentParentId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="comBodyId != null">com_body_id = #{comBodyId},</if>
+            <if test="commentText != null">comment_text = #{commentText},</if>
+            <if test="comBodyType != null">com_body_type = #{comBodyType},</if>
+            <if test="createDate != null">create_date = #{createDate},</if>
+            <if test="likeNum != null">like_num = #{likeNum},</if>
+            <if test="isVio != null">is_vio = #{isVio},</if>
+        </trim>
+        where comment_id = #{commentId}
+    </update>
+
+    <delete id="deleteAsqCommentByCommentId" parameterType="Long">
+        delete
+        from asq_comment
+        where comment_id = #{commentId}
+           OR comment_parent_id = #{commentId}
+    </delete>
+
+    <delete id="deleteAsqCommentByCommentIds" parameterType="String">
+        delete from asq_comment where comment_id in
+        <foreach item="commentId" collection="array" open="(" separator="," close=")">
+            #{commentId}
+        </foreach>
+        OR
+        comment_parent_id in
+        <foreach item="commentId" collection="array" open="(" separator="," close=")">
+            #{commentId}
+        </foreach>
+    </delete>
+</mapper>
