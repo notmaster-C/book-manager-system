@@ -3,14 +3,14 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
-      <el-breadcrumb-item>借阅规则管理</el-breadcrumb-item>
+      <el-breadcrumb-item>书籍类型</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card shadow="always">
       <!-- 搜索内容和导出区域 -->
       <el-row>
         <el-col :span="4">
           <el-button type="primary" @click="showAddDialog()">
-            <i class="el-icon-plus"></i> 添加</el-button
+            <i class="el-icon-plus"></i>添加分类</el-button
           >
         </el-col>
         <el-col :span="2" style="float: right">
@@ -19,7 +19,7 @@
             :data="tableData"
             :fields="json_fields"
             :header="title"
-            name="借阅规则.xls"
+            name="书籍类型.xls"
           >
             <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
             <el-button type="primary" class="el-icon-printer" size="mini"
@@ -44,20 +44,16 @@
        </el-col>
       </el-row>
       <!-- 表格区域 -->
-      <el-table :data="tableData" border style="width: 100%" stripe id="pdfDom" :default-sort = "{prop: 'bookRuleId', order: 'ascending'}"
+      <el-table :data="tableData" border style="width: 100%" stripe  id="pdfDom" :default-sort = "{prop: 'typeId', order: 'ascending'}"
       v-loading="loading"
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-table-column prop="bookRuleId" label="ID" sortable> </el-table-column>
-        <el-table-column prop="bookDays" label="限制天数" sortable> </el-table-column>
-        <el-table-column prop="bookLimitNumber" label="限制本数" sortable>
-        </el-table-column>
-        <el-table-column prop="bookLimitLibrary" label="限制图书馆">
-        </el-table-column>
-        <el-table-column prop="bookOverdueFee" label="逾期费用" sortable>
-        </el-table-column>
+        <el-table-column prop="typeId" label="ID" sortable> </el-table-column>
+        <el-table-column prop="typeName" label="分类名"> </el-table-column>
+        <el-table-column prop="typeContent" label="描述"> </el-table-column>
         <el-table-column label="操作">
+        
           <template slot-scope="scope">
             <!-- 修改按钮 -->
             <el-tooltip
@@ -70,7 +66,7 @@
                 type="primary"
                 icon="el-icon-edit"
                 size="mini"
-                @click="showEditDialog(scope.row.ruleId)"
+                @click="showEditDialog(scope.row.typeId)"
               ></el-button
             ></el-tooltip>
 
@@ -85,7 +81,7 @@
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="removeUserById(scope.row.ruleId)"
+                @click="removeUserById(scope.row.typeId)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -96,7 +92,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pageNum"
-        :page-sizes="[1, 2, 3, 4, 5]"
+        :page-sizes="[5, 10, 20, 50, 100]"
         :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="this.total"
@@ -104,7 +100,7 @@
       </el-pagination>
       <!-- 修改规则的对话框 -->
       <el-dialog
-        title="修改规则"
+        title="修改分类"
         :visible.sync="editDialogVisible"
         width="50%"
         @close="editDialogClosed"
@@ -115,33 +111,23 @@
           :rules="editFormRules"
           label-width="120px"
         >
-          <el-form-item label="限制天数" prop="bookDays">
-            <el-input v-model="editForm.bookDays"></el-input>
+          <el-form-item label="分类名" prop="typeName">
+            <el-input v-model="editForm.typeName"></el-input>
           </el-form-item>
-          <el-form-item label="限制数量" prop="bookLimitNumber">
-            <el-input v-model="editForm.bookLimitNumber"></el-input>
-          </el-form-item>
-          <el-form-item label="限制图书馆">
-            <el-checkbox-group v-model="editForm.checkList">
-              <el-checkbox label="南图"></el-checkbox>
-              <el-checkbox label="北图"></el-checkbox>
-              <el-checkbox label="教师之家"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="逾期每天费用" prop="bookOverdueFee">
-            <el-input v-model="editForm.bookOverdueFee"></el-input>
+          <el-form-item label="分类描述" prop="typeContent">
+            <el-input v-model="editForm.typeContent" type="textarea"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="updateRule"
+          <el-button type="primary" @click="updateBookType"
             >确 定</el-button
           >
         </span>
       </el-dialog>
       <!-- 添加规则的对话框 -->
       <el-dialog
-        title="添加规则"
+        title="添加分类"
         :visible.sync="addDialogVisible"
         width="50%"
         @close="addDialogClosed"
@@ -152,26 +138,16 @@
           :rules="addFormRules"
           label-width="120px"
         >
-          <el-form-item label="限制天数" prop="bookDays">
-            <el-input v-model="addForm.bookDays"></el-input>
+          <el-form-item label="分类名" prop="typeName">
+            <el-input v-model="addForm.typeName"></el-input>
           </el-form-item>
-          <el-form-item label="限制数量" prop="bookLimitNumber">
-            <el-input v-model="addForm.bookLimitNumber"></el-input>
-          </el-form-item>
-          <el-form-item label="限制图书馆">
-            <el-checkbox-group v-model="addForm.checkList">
-              <el-checkbox label="南图"></el-checkbox>
-              <el-checkbox label="北图"></el-checkbox>
-              <el-checkbox label="教师之家"></el-checkbox>
-            </el-checkbox-group>
-          </el-form-item>
-          <el-form-item label="逾期每天费用" prop="bookOverdueFee">
-            <el-input v-model="addForm.bookOverdueFee"></el-input>
+          <el-form-item label="分类描述" prop="typeContent">
+            <el-input v-model="addForm.typeContent" type="textarea"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addRule">添加规则</el-button>
+          <el-button type="primary" @click="addBookType">添加分类</el-button>
         </span>
       </el-dialog>
     </el-card>
@@ -184,79 +160,36 @@ export default {
     return {
       tableData: [
         {
-          bookRuleId: 183,
-          bookDays: 60,
-          bookLimitNumber: 1000,
-          bookLimitLibrary: "1、2、3",
-          bookOverdueFee: 3.0,
-        },
-        {
-          bookRuleId: 183,
-          bookDays: 60,
-          bookLimitNumber: 1000,
-          bookLimitLibrary: "1、2、3",
-          bookOverdueFee: 3.0,
-        },
-        {
-          bookRuleId: 183,
-          bookDays: 60,
-          bookLimitNumber: 1000,
-          bookLimitLibrary: "1、2、3",
-          bookOverdueFee: 3.0,
-        },
-        {
-          bookRuleId: 183,
-          bookDays: 60,
-          bookLimitNumber: 1000,
-          bookLimitLibrary: "1、2、3",
-          bookOverdueFee: 3.0,
+          typeId: 183,
+          typeName: "童话",
+          typeContent: "孩子的世界",
         },
       ],
 
       editDialogVisible: false,
       editForm: {
-        bookDays: "",
-        bookLimitNumber: "",
-        checkList: ["南图", "北图", "教师之家"],
-        bookOverdueFee: 0,
-        bookLimitLibrary: "",
+        typeName: "",
+        typeContent: "",
       },
       editFormRules: {
-        bookLimitDays: [
-          { required: true, message: "请输入限制天数", trigger: "blur" },
+        typeName: [
+          { required: true, message: "请输入分类名", trigger: "blur" },
         ],
-        bookLimitNumber: [
-          { required: true, message: "请输入限制数量", trigger: "blur" },
-        ],
-        bookOverdueFee: [
-          {
-            required: true,
-            message: "请输入正确的逾期每天费用",
-            trigger: "blur",
-          },
+        typeContent: [
+          { required: true, message: "请输入分类描述", trigger: "blur" },
         ],
       },
       addDialogVisible: false,
       addForm: {
-        bookDays: "",
-        bookLimitNumber: "",
-        checkList: ["南图", "北图", "教师之家"],
-        bookOverdueFee: 0,
-        bookLimitLibrary: "",
+        typeName: "",
+        typeContent: "",
       },
       addFormRules: {
-        bookLimitDays: [
-          { required: true, message: "请输入限制天数", trigger: "blur" },
+        typeName: [
+          { required: true, message: "请输入分类名", trigger: "blur" },
         ],
-        bookLimitNumber: [
-          { required: true, message: "请输入限制数量", trigger: "blur" },
-        ],
-        bookOverdueFee: [
-          {
-            required: true,
-            message: "请输入正确的逾期每天费用",
-            trigger: "blur",
-          },
+        typeContent: [
+          { required: true, message: "请输入分类描述", trigger: "blur" },
         ],
       },
       queryInfo: {
@@ -264,13 +197,11 @@ export default {
         pageSize: 5,
       },
       total: 0,
-      title: "借阅规则",
+      title: "书籍类型",
       json_fields: {
-        规则编号: "bookRuleId",
-        限制天数: "bookDays",
-        限制本数: "bookLimitNumber",
-        限制图书馆: "bookLimitLibrary",
-        逾期费用: "bookOverdueFee",
+        类别编号: "typeId",
+        类别昵称: "typeName",
+        类别概述: "typeContent",
       },
       loading:true
     };
@@ -278,22 +209,22 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.queryInfo.pageSize = val;
-      this.getRuleList();
+      this.getBookTypeList();
     },
     handleCurrentChange(val) {
       this.queryInfo.pageNum = val;
-      this.getRuleList();
+      this.getBookTypeList();
     },
     //让修改公告的对话框可见,并从数据库中回显数据
     async showEditDialog(id) {
       // 让修改公告的对话框可见
-      const {data:res} = await this.$http.get('admin/get_rule_ruleid/'+id)
+      this.editDialogVisible = true;
+      const { data: res } = await this.$http.get("admin/get_booktype/" + id);
+      console.log(res);
       if (res.status !== 200) {
         return this.$message.error(res.msg);
       }
-      
-      this.editForm = res.data
-      this.editDialogVisible = true;
+      this.editForm = res.data;
     },
     //监听修改对话框的关闭，一旦对话框关闭，就重置表单，回显数据
     editDialogClosed() {
@@ -321,72 +252,80 @@ export default {
         return this.$message.info("已经取消删除");
       }
       //如果用户确认删除，那么下一步就是发送axios请求，检查响应状态码是否成功,成功则返回删除成功，否则返回删除失败
-      const {data:res} = await this.$http.delete('admin/delete_rule/'+id);
-       if (res.status !== 200) {
+      const {data:res } = await this.$http.get('admin/delete_booktype/'+id)
+      console.log(res);
+      if (res.status !== 200) {
         return this.$message.error(res.msg);
       }
-      this.$message.success({
-        message: res.msg,
-        duration: 1500,
-      });
-      this.getRuleList();
+      this.$message.success(res.msg)
+      // 防止删除出现数据显示错误
+      this.queryInfo.pageNum= 1;
+      this.queryInfo.pageSize= 5;
+      this.getBookTypeList();
     },
     //监听添加公告对话框的关闭，一旦对话框关闭，就重置表单
     addDialogClosed() {
       this.$refs.addFormRef.resetFields();
-      this.addForm.checkList = ["南图", "北图", "教师之家"];
     },
     //当用户点击发送新公告时，让添加对话框的visible改为true
     showAddDialog() {
       this.addDialogVisible = true;
     },
-    async getRuleList() {
+    async getBookTypeList() {
       this.loading = true;
       const { data: res } = await this.$http.post(
-        "admin/get_rulelist_page",
+        "admin/get_booktype_page",
         this.queryInfo
       );
+      // console.log(res);
       if (res.status !== 200) {
         this.loading = false;
         return this.$message.error(res.msg);
       }
-      this.$message.success({
-        message: res.msg,
-        duration: 1000,
-      });
+      this.$message.success(
+        {
+          message:res.msg,
+          duration:1000
+        }
+      )
       this.tableData = res.data.records;
        this.total = parseInt(res.data.total);
       this.loading = false;
     },
-    async addRule() {
-      const libraryList = this.addForm.checkList.join(',')
-      this.addForm.bookLimitLibrary = libraryList;
-      const { data: res } = await this.$http.post(
-        "admin/add_rule",
-        this.addForm
-      );
-      // console.log(res);
-      if (res.status !== 200) {
-        return this.$message.error(res.msg);
-      }
-      this.$message.success({
-        message: res.msg,
-        duration: 1500,
+    async addBookType() {
+      this.$refs.addFormRef.validate(async (valid) => {
+        // console.log(valid);
+        //如果表单验证无效，直接返回
+        if (!valid) {
+          return;
+        }
+        // 发送axios请求
+        const { data: res } = await this.$http.post(
+          "admin/add_booktype",
+          this.addForm
+        );
+        if (res.status !== 200) {
+          return this.$message.error(res.msg);
+        }
+        this.$message.success({
+          message: res.msg,
+          duration: 1500,
+        });
+        this.getBookTypeList();
+        this.addDialogVisible = false;
       });
-      this.addDialogVisible = false;
-      this.getRuleList();
     },
-    async updateRule(){
-      const {data:res} = await this.$http.put('admin/update_rule',this.editForm)
-      // console.log(res);
+    async updateBookType(){
+      const {data:res} = await this.$http.post('admin/update_booktype',this.editForm)
+      console.log(res);
       if (res.status !== 200) {
         return this.$message.error(res.msg);
       }
       this.$message.success({
-        message: res.msg,
-        duration: 1500,
-      });
-      this.getRuleList();
+        message:res.msg,
+        duration:1500
+      })
+      this.getBookTypeList();
       this.editDialogVisible = false;
     },
     downLoad() {
@@ -406,7 +345,7 @@ export default {
     }
   },
   created() {
-    this.getRuleList();
+    this.getBookTypeList();
   },
 };
 </script>

@@ -3,14 +3,13 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
-      <el-breadcrumb-item>图书查询</el-breadcrumb-item>
+      <el-breadcrumb-item>还书报表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card shadow="always">
       <!-- 搜索内容和导出区域 -->
       <el-row>
         <el-col :span="6"
-          >条件搜索:
-          <el-select
+          >条件搜索:<el-select
             v-model="queryInfo.condition"
             filterable
             placeholder="请选择"
@@ -30,27 +29,26 @@
             placeholder="请输入内容"
             v-model="queryInfo.query"
             class="input-with-select"
-            @keyup.enter.native="searchBookByPage"
+            @keyup.enter.native="getRuturnStatement"
           >
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="searchBookByPage"
-            ></el-button>
-          </el-input>
-        </el-col>
+              @click="getRuturnStatement"
+            ></el-button> </el-input
+        ></el-col>
         <el-col :span="2" style="float: right">
           <download-excel
             class="export-excel-wrapper"
             :data="tableData"
             :fields="json_fields"
             :header="title"
-            name="图书查询表格.xls"
+            name="还书报表.xls"
           >
             <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
             <el-button type="primary" class="el-icon-printer" size="mini"
-              >导出Excel
-            </el-button>
+              >导出Excel</el-button
+            >
           </download-excel>
         </el-col>
         <el-col :span="2" style="float: right">
@@ -59,62 +57,42 @@
             class="el-icon-printer"
             size="mini"
             @click="downLoad"
-            >导出PDF
-          </el-button>
+            >导出PDF</el-button
+          >
         </el-col>
         <el-col :span="2" style="float: right">
-          <el-button
-            type="success"
-            class="el-icon-full-screen"
-            size="mini"
-            @click="fullScreen"
-            >全屏
-          </el-button>
-        </el-col>
+         
+         <el-button type="success" class="el-icon-full-screen" size="mini" @click="fullScreen"
+           >全屏</el-button
+         >
+       </el-col>
       </el-row>
       <!-- 表格区域 -->
       <el-table
         :data="tableData"
-        height="520"
         border
-        style="width: 100%; font-size: 14px"
+        style="width: 100%"
+        stripe
+        id="pdfDom"
+        :default-sort="{ prop: 'cardNumber', order: 'ascending' }"
         v-loading="loading"
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)"
-        id="pdfDom"
-        :default-sort="{ prop: 'bookNumber', order: 'ascending' }"
-        stripe
       >
-        <el-table-column
-          prop="bookNumber"
-          label="图书编号"
-          sortable
-        ></el-table-column>
-        <el-table-column prop="bookName" label="图书名称"></el-table-column>
-        <el-table-column prop="bookAuthor" label="作者"></el-table-column>
-        <el-table-column prop="bookLibrary" label="图书馆"></el-table-column>
-        <el-table-column prop="bookType" label="分类"></el-table-column>
-        <el-table-column
-          prop="bookLocation"
-          label="位置"
-          sortable
-        ></el-table-column>
-        <el-table-column
-          prop="bookStatus"
-          label="状态"
-          sortable
-        ></el-table-column>
-        <el-table-column prop="bookDescription" label="描述" width="600px">
+        <el-table-column prop="cardNumber" label="借阅证编号" sortable>
         </el-table-column>
+        <el-table-column prop="bookNumber" label="图书编号" sortable> </el-table-column>
+        <el-table-column prop="borrowDate" label="借阅日期" sortable> </el-table-column>
+        <el-table-column prop="closeDate" label="截止日期" sortable> </el-table-column>
       </el-table>
       <!-- 分页查询区域 -->
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="this.queryInfo.pageNum"
-        :page-sizes="[1, 2, 3, 4, 5]"
-        :page-size="this.queryInfo.pageSize"
+        :current-page="queryInfo.pageNum"
+        :page-sizes="[5, 10, 20, 50, 100]"
+        :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="this.total"
       >
@@ -129,27 +107,31 @@ export default {
     return {
       options: [
         {
+          value: "card_number",
+          label: "借阅证号",
+        },
+        {
           value: "book_number",
           label: "图书编号",
         },
         {
-          value: "book_name",
-          label: "图书名称",
+          value: "borrow_date",
+          label: "借阅日期",
         },
         {
-          value: "book_author",
-          label: "作者",
-        },
-        {
-          value: "book_location",
-          label: "位置",
-        },
-        {
-          value: "book_description",
-          label: "描述",
+          value: "close_date",
+          label: "截止日期",
         },
       ],
-      tableData: [],
+      tableData: [
+        {
+          cardNumber: Number,
+          bookNumber: Number,
+          borrowDate: "",
+          closeDate: "",
+        },
+      ],
+
       queryInfo: {
         pageNum: 1,
         pageSize: 5,
@@ -157,41 +139,35 @@ export default {
         query: "",
       },
       total: 0,
-
-      title: "图书查询表格",
+      title: "借书报表",
       json_fields: {
+        借阅证号: "cardNumber",
         图书编号: "bookNumber",
-        图书名称: "bookName",
-        作者: "bookAuthor",
-        图书馆: "bookLibrary",
-        分类: "bookType",
-        位置: "bookLocation",
-        状态: "bookStatus",
-        描述: "bookDescription",
+        借阅日期: "borrowDate",
+        截止日期: "closeDate",
       },
-      loading: true,
+      loading:true
     };
-  },
-  created() {
-    this.searchBookByPage();
   },
   methods: {
     handleSizeChange(val) {
       this.queryInfo.pageSize = val;
 
-      this.searchBookByPage();
+      this.getRuturnStatement();
     },
     handleCurrentChange(val) {
       this.queryInfo.pageNum = val;
 
-      this.searchBookByPage();
+      this.getRuturnStatement();
     },
-    async searchBookByPage() {
+    async getRuturnStatement() {
       this.loading = true;
       const { data: res } = await this.$http.post(
-        "user/search_book_page",
+        "bookadmin/get_return_statement",
         this.queryInfo
       );
+      // console.log(res);
+
       this.tableData = [];
       if (res.status !== 200) {
         this.total = 0;
@@ -202,27 +178,31 @@ export default {
         message: res.msg,
         duration: 1000,
       });
-      this.loading = false;
       this.tableData = res.data.records;
-      this.total = parseInt(res.data.total);
+       this.total = parseInt(res.data.total);
+      this.loading = false;
     },
     downLoad() {
       this.getPdf(this.title); //参数是下载的pdf文件名
     },
-    fullScreen() {
-      // Dom对象的一个属性: 可以用来判断当前是否为全屏模式(trueORfalse)
-      let full = document.fullscreenElement;
-      // 切换为全屏模式
-      if (!full) {
+    fullScreen(){
+          // Dom对象的一个属性: 可以用来判断当前是否为全屏模式(trueORfalse)
+    let full = document.fullscreenElement;
+    // 切换为全屏模式
+    if(!full){
         // 文档根节点的方法requestFullscreen实现全屏模式
         document.documentElement.requestFullscreen();
-      } else {
+    }else{
         // 退出全屏模式
         document.exitFullscreen();
-      }
-    },
+    }
+    }
+  },
+  created() {
+    this.getRuturnStatement();
   },
 };
 </script>
 
-<style lang="css"></style>
+<style>
+</style>

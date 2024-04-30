@@ -2,7 +2,7 @@
   <div class="information_container">
     <div class="backgroundImg">
       <img
-        src="https://xxx.xiaobaitiao.icu/img/icu/202312211243635.jpg"
+        src="https://s.cn.bing.net/th?id=OHR.CheetahRain_ZH-CN6722375507_1920x1080.webp&qlt=50"
         alt="背景图片"
       />
     </div>

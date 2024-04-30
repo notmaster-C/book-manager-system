@@ -2,7 +2,7 @@
   <div class="comment_container">
     <div class="backgroundImg">
       <img
-        src="https://xxx.xiaobaitiao.icu/img/icu/202312211243628.jpg"
+        src="https://s.cn.bing.net/th?id=OHR.TrinityDublin_ZH-CN9521778819_1920x1080.webp&qlt=50"
         alt=""
       />
     </div>
@@ -52,7 +52,7 @@ export default {
       lanesCount: 1, //固定弹幕(测试不生效)
       boxWidth: 1600, //弹幕宽度
       boxHeight: 200, //弹幕高度(测试不生效)
-      throttleGap: 3000, //消息间隔
+      throttleGap: 2000, //消息间隔
       input: "",
       //弹幕列表，格式为数组
       barrageList: [],

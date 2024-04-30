@@ -3,7 +3,7 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
-      <el-breadcrumb-item>违章信息</el-breadcrumb-item>
+      <el-breadcrumb-item>借阅信息</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card shadow="always">
       <!-- 搜索内容和导出区域 -->
@@ -29,12 +29,12 @@
             placeholder="请输入内容"
             v-model="queryInfo.query"
             class="input-with-select"
-            @keyup.enter.native="searchViolationByPage"
+            @keyup.enter.native="searchBookBorrowByPage"
           >
             <el-button
               slot="append"
               icon="el-icon-search"
-              @click="searchViolationByPage"
+              @click="searchBookBorrowByPage"
             ></el-button> </el-input
         ></el-col>
         <el-col :span="2" style="float: right">
@@ -43,7 +43,7 @@
             :data="tableData"
             :fields="json_fields"
             :header="title"
-            name="图书违章表格.xls"
+            name="图书借阅表格.xls"
           >
             <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
             <el-button type="primary" class="el-icon-printer" size="mini"
@@ -68,19 +68,29 @@
        </el-col>
       </el-row>
       <!-- 表格区域 -->
-      <el-table :data="tableData" border style="width: 100%" stripe id="pdfDom" :default-sort = "{prop: 'cardNumber', order: 'ascending'}"
-      v-loading="loading"
+      <el-table
+        :data="tableData"
+        min-height="300"
+        max-height="520"
+        border
+        style="width: 100%"
+        stripe
+        id="pdfDom"
+        :default-sort="{ prop: 'cardNumber', order: 'ascending' }"
+        v-loading="loading"
         element-loading-text="拼命加载中"
-    element-loading-spinner="el-icon-loading"
-    element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-table-column prop="cardNumber" label="借阅证号" sortable> </el-table-column>
-        <el-table-column prop="bookNumber" label="图书编号" sortable> </el-table-column>
-        <el-table-column prop="borrowDate" label="借阅日期" sortable> </el-table-column>
-        <el-table-column prop="closeDate" label="截止日期" sortable> </el-table-column>
-        <el-table-column prop="returnDate" label="归还日期" sortable> </el-table-column>
-        <el-table-column prop="violationMessage" label="违章信息">
+        element-loading-spinner="el-icon-loading"
+        element-loading-background="rgba(0, 0, 0, 0.8)"
+      >
+        <el-table-column prop="cardNumber" label="借阅编号" sortable>
         </el-table-column>
-        <el-table-column prop="violationAdmin" label="处理人">
+        <el-table-column prop="bookNumber" label="图书编号" sortable>
+        </el-table-column>
+        <el-table-column prop="borrowDate" label="借阅日期" sortable>
+        </el-table-column>
+        <el-table-column prop="closeDate" label="截止日期" sortable>
+        </el-table-column>
+        <el-table-column prop="returnDate" label="归还日期" sortable>
         </el-table-column>
       </el-table>
       <!-- 分页查询区域 -->
@@ -88,7 +98,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="this.queryInfo.pageNum"
-        :page-sizes="[1, 2, 3, 4, 5]"
+        :page-sizes="[5, 10, 20, 50, 100]"
         :page-size="this.queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="this.total"
@@ -119,20 +129,17 @@ export default {
           value: "return_date",
           label: "归还日期",
         },
-        {
-          value: "violation_message",
-          label: "违章信息",
-        },
       ],
       tableData: [
         {
           cardNumber: Number,
           bookNumber: Number,
+          borrowId: Number,
           borrowDate: "",
           closeDate: "",
           returnDate: "",
-          violationMessage: "",
-          violationAdmin: "",
+          createTime: "",
+          updateTime: "",
         },
       ],
       queryInfo: {
@@ -143,34 +150,32 @@ export default {
         cardNumber: window.sessionStorage.getItem("cardNumber"),
       },
       total: 0,
-      title: "图书违章表格",
+      title: "图书借阅表格",
       json_fields: {
-        借阅证号: "cardNumber",
+        借阅编号: "cardNumber",
         图书编号: "bookNumber",
         借阅日期: "borrowDate",
         截止日期: "closeDate",
         归还日期: "returnDate",
-        违章信息:"violationMessage",
-        处理人:"violationAdmin"
       },
-      loading:true
+      loading: true,
     };
   },
   methods: {
     handleSizeChange(val) {
       this.queryInfo.pageSize = val;
 
-      this.searchViolationByPage();
+      this.searchBookBorrowByPage();
     },
     handleCurrentChange(val) {
       this.queryInfo.pageNum = val;
 
-      this.searchViolationByPage();
+      this.searchBookBorrowByPage();
     },
-    async searchViolationByPage() {
+    async searchBookBorrowByPage() {
       this.loading = true;
       const { data: res } = await this.$http.post(
-        "user/get_violation",
+        "user/get_bookborrow",
         this.queryInfo
       );
 
@@ -206,7 +211,7 @@ export default {
     }
   },
   created() {
-    this.searchViolationByPage();
+    this.searchBookBorrowByPage();
   },
 };
 </script>

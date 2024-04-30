@@ -2,6 +2,8 @@
 
 >[Gitee 主页](https://gitee.com/falle22222n-leaves)
 
+前台：http://localhost:8081/#/login
+后台：http://localhost:8081/#/loginadmin
 
 Language：**[English](README_en.md)**| **[中文](README.md).**
 

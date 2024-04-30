@@ -87,23 +87,23 @@
       <el-main>
         <!-- 路由占位符 -->
         <router-view></router-view>
-        <div class="footer">
-          <el-popover placement="top-start" :width="150" trigger="hover">
-            <p slot="reference"> 联系作者|   ©2022-2023 By 小白条<br /> </p>
-            <img
-                src="https://pic.yupi.icu/5563/202312061315664.png"
-                style="height: 100px; width: 100px"
-            />
-          </el-popover>
-          <a href="https://beian.miit.gov.cn">备案号:浙ICP备2023044565号-2 |</a>
-          <a href="https://beian.mps.gov.cn/#/query/webSearch">
-            <img
-                src="https://xxx.xiaobaitiao.icu/img/icu/202312211243636.png"
-                style="height: 16px; width: 16px; margin: 5px 0px 0px 5px"
-            />
-            浙公网安备33028202001002号
-          </a>
-        </div>
+<!--        <div class="footer">-->
+<!--          <el-popover placement="top-start" :width="150" trigger="hover">-->
+<!--            <p slot="reference"> 联系作者|   ©2022-2023 By 小白条<br /> </p>-->
+<!--            <img-->
+<!--                src="https://pic.yupi.icu/5563/202312061315664.png"-->
+<!--                style="height: 100px; width: 100px"-->
+<!--            />-->
+<!--          </el-popover>-->
+<!--          <a href="https://beian.miit.gov.cn">备案号:浙ICP备2023044565号-2 |</a>-->
+<!--          <a href="https://beian.mps.gov.cn/#/query/webSearch">-->
+<!--            <img-->
+<!--                src="https://xxx.xiaobaitiao.icu/img/icu/202312211243636.png"-->
+<!--                style="height: 16px; width: 16px; margin: 5px 0px 0px 5px"-->
+<!--            />-->
+<!--            浙公网安备33028202001002号-->
+<!--          </a>-->
+<!--        </div>-->
       </el-main>
     </el-container>
   </el-container>

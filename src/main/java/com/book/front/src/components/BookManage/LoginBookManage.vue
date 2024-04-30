@@ -175,7 +175,7 @@ export default {
   bottom: 0px;
   left: 35%;
   color: #ccc;
-
+  display: none;
   a {
     color: #ccc;
   }

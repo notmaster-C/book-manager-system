@@ -3,43 +3,14 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
-      <el-breadcrumb-item>借阅证管理</el-breadcrumb-item>
+      <el-breadcrumb-item>借阅规则管理</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card shadow="always">
       <!-- 搜索内容和导出区域 -->
-      <el-row :gutter="10">
-        <el-col :span="6"
-          >条件搜索:<el-select
-            v-model="queryInfo.condition"
-            filterable
-            placeholder="请选择"
-            style="margin-left: 15px"
-          >
-            <el-option
-              v-for="item in searchs"
-              :key="item.value"
-              :label="item.label"
-              :value="item.value"
-            >
-            </el-option>
-          </el-select>
-        </el-col>
-        <el-col :span="4">
-          <el-input
-            placeholder="请输入内容"
-            v-model="queryInfo.query"
-            class="input-with-select"
-            @keyup.enter.native="getStatementList"
-          >
-            <el-button
-              slot="append"
-              icon="el-icon-search"
-              @click="getStatementList"
-            ></el-button> </el-input
-        ></el-col>
+      <el-row>
         <el-col :span="4">
           <el-button type="primary" @click="showAddDialog()">
-            <i class="el-icon-plus"></i> 添加借阅证</el-button
+            <i class="el-icon-plus"></i> 添加</el-button
           >
         </el-col>
         <el-col :span="2" style="float: right">
@@ -48,7 +19,7 @@
             :data="tableData"
             :fields="json_fields"
             :header="title"
-            name="借阅证管理.xls"
+            name="借阅规则.xls"
           >
             <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
             <el-button type="primary" class="el-icon-printer" size="mini"
@@ -72,18 +43,20 @@
          >
        </el-col>
       </el-row>
-
       <!-- 表格区域 -->
-      <el-table :data="tableData" border style="width: 100%" stripe id="pdfDom" :default-sort = "{prop: 'cardNumber', order: 'ascending'}"
+      <el-table :data="tableData" border style="width: 100%" stripe id="pdfDom" :default-sort = "{prop: 'bookRuleId', order: 'ascending'}"
       v-loading="loading"
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-table-column prop="cardNumber" label="借阅证编号" sortable>
+        <el-table-column prop="bookRuleId" label="ID" sortable> </el-table-column>
+        <el-table-column prop="bookDays" label="限制天数" sortable> </el-table-column>
+        <el-table-column prop="bookLimitNumber" label="限制本数" sortable>
         </el-table-column>
-        <el-table-column prop="username" label="用户名"> </el-table-column>
-        <el-table-column prop="ruleNumber" label="借阅规则" sortable> </el-table-column>
-        <el-table-column prop="status" label="状态" sortable> </el-table-column>
+        <el-table-column prop="bookLimitLibrary" label="限制图书馆">
+        </el-table-column>
+        <el-table-column prop="bookOverdueFee" label="逾期费用" sortable>
+        </el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <!-- 修改按钮 -->
@@ -97,7 +70,7 @@
                 type="primary"
                 icon="el-icon-edit"
                 size="mini"
-                @click="showEditDialog(scope.row.userId)"
+                @click="showEditDialog(scope.row.ruleId)"
               ></el-button
             ></el-tooltip>
 
@@ -112,7 +85,7 @@
                 type="danger"
                 icon="el-icon-delete"
                 size="mini"
-                @click="removeUserById(scope.row.userId)"
+                @click="removeUserById(scope.row.ruleId)"
               ></el-button>
             </el-tooltip>
           </template>
@@ -123,7 +96,7 @@
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
         :current-page="queryInfo.pageNum"
-        :page-sizes="[1, 2, 3, 4, 5]"
+        :page-sizes="[5, 10, 20, 50, 100]"
         :page-size="queryInfo.pageSize"
         layout="total, sizes, prev, pager, next, jumper"
         :total="this.total"
@@ -131,7 +104,7 @@
       </el-pagination>
       <!-- 修改规则的对话框 -->
       <el-dialog
-        title="修改书籍"
+        title="修改规则"
         :visible.sync="editDialogVisible"
         width="50%"
         @close="editDialogClosed"
@@ -142,38 +115,33 @@
           :rules="editFormRules"
           label-width="120px"
         >
-          <el-form-item label="账号" prop="username">
-            <el-input v-model="editForm.username"></el-input>
+          <el-form-item label="限制天数" prop="bookDays">
+            <el-input v-model="editForm.bookDays"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="editForm.password" type="password"></el-input>
+          <el-form-item label="限制数量" prop="bookLimitNumber">
+            <el-input v-model="editForm.bookLimitNumber"></el-input>
           </el-form-item>
-          <el-form-item label="规则" prop="ruleNumber">
-            <el-select v-model="editForm.ruleNumber" placeholder="请选择">
-              <el-option
-                v-for="item in bookRuleIdLists"
-                :key="item.ruleId"
-                :label="item.bookRuleId"
-                :value="item.bookRuleId"
-              >
-              </el-option>
-            </el-select>
+          <el-form-item label="限制图书馆">
+            <el-checkbox-group v-model="editForm.checkList">
+              <el-checkbox label="南图"></el-checkbox>
+              <el-checkbox label="北图"></el-checkbox>
+              <el-checkbox label="教师之家"></el-checkbox>
+            </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="状态" prop="userStatus">
-            <el-radio-group v-model="editForm.userStatus">
-              <el-radio label="可用">可用</el-radio>
-              <el-radio label="挂失">挂失</el-radio>
-            </el-radio-group>
+          <el-form-item label="逾期每天费用" prop="bookOverdueFee">
+            <el-input v-model="editForm.bookOverdueFee"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="editDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="updateStatement">确 定</el-button>
+          <el-button type="primary" @click="updateRule"
+            >确 定</el-button
+          >
         </span>
       </el-dialog>
-      <!-- 添加书籍的对话框 -->
+      <!-- 添加规则的对话框 -->
       <el-dialog
-        title="添加借书证"
+        title="添加规则"
         :visible.sync="addDialogVisible"
         width="50%"
         @close="addDialogClosed"
@@ -184,33 +152,26 @@
           :rules="addFormRules"
           label-width="120px"
         >
-          <el-form-item label="账号" prop="username">
-            <el-input v-model="addForm.username"></el-input>
+          <el-form-item label="限制天数" prop="bookDays">
+            <el-input v-model="addForm.bookDays"></el-input>
           </el-form-item>
-          <el-form-item label="密码" prop="password">
-            <el-input v-model="addForm.password"></el-input>
+          <el-form-item label="限制数量" prop="bookLimitNumber">
+            <el-input v-model="addForm.bookLimitNumber"></el-input>
           </el-form-item>
-          <el-form-item label="规则" prop="ruleNumber">
-            <el-select v-model="addForm.ruleNumber" placeholder="请选择">
-              <el-option
-                v-for="item in bookRuleIdLists"
-                :key="item.ruleId"
-                :label="item.bookRuleId"
-                :value="item.bookRuleId"
-              >
-              </el-option>
-            </el-select>
+          <el-form-item label="限制图书馆">
+            <el-checkbox-group v-model="addForm.checkList">
+              <el-checkbox label="南图"></el-checkbox>
+              <el-checkbox label="北图"></el-checkbox>
+              <el-checkbox label="教师之家"></el-checkbox>
+            </el-checkbox-group>
           </el-form-item>
-          <el-form-item label="状态" prop="userStatus">
-            <el-radio-group v-model="addForm.userStatus">
-              <el-radio label="可用">可用</el-radio>
-              <el-radio label="禁用">禁用</el-radio>
-            </el-radio-group>
+          <el-form-item label="逾期每天费用" prop="bookOverdueFee">
+            <el-input v-model="addForm.bookOverdueFee"></el-input>
           </el-form-item>
         </el-form>
         <span slot="footer" class="dialog-footer">
           <el-button @click="addDialogVisible = false">取 消</el-button>
-          <el-button type="primary" @click="addStatement">添加借阅证</el-button>
+          <el-button type="primary" @click="addRule">添加规则</el-button>
         </span>
       </el-dialog>
     </el-card>
@@ -221,66 +182,95 @@
 export default {
   data() {
     return {
-      tableData: [],
+      tableData: [
+        {
+          bookRuleId: 183,
+          bookDays: 60,
+          bookLimitNumber: 1000,
+          bookLimitLibrary: "1、2、3",
+          bookOverdueFee: 3.0,
+        },
+        {
+          bookRuleId: 183,
+          bookDays: 60,
+          bookLimitNumber: 1000,
+          bookLimitLibrary: "1、2、3",
+          bookOverdueFee: 3.0,
+        },
+        {
+          bookRuleId: 183,
+          bookDays: 60,
+          bookLimitNumber: 1000,
+          bookLimitLibrary: "1、2、3",
+          bookOverdueFee: 3.0,
+        },
+        {
+          bookRuleId: 183,
+          bookDays: 60,
+          bookLimitNumber: 1000,
+          bookLimitLibrary: "1、2、3",
+          bookOverdueFee: 3.0,
+        },
+      ],
 
       editDialogVisible: false,
       editForm: {
-        username: "",
-        password: "",
-        ruleNumber: "",
-        status: "",
-        userStatus: "",
+        bookDays: "",
+        bookLimitNumber: "",
+        checkList: ["南图", "北图", "教师之家"],
+        bookOverdueFee: 0,
+        bookLimitLibrary: "",
       },
-      editFormRules: {},
+      editFormRules: {
+        bookLimitDays: [
+          { required: true, message: "请输入限制天数", trigger: "blur" },
+        ],
+        bookLimitNumber: [
+          { required: true, message: "请输入限制数量", trigger: "blur" },
+        ],
+        bookOverdueFee: [
+          {
+            required: true,
+            message: "请输入正确的逾期每天费用",
+            trigger: "blur",
+          },
+        ],
+      },
       addDialogVisible: false,
       addForm: {
-        username: "",
-        password: "",
-        ruleNumber: "",
-        userStatus: "",
+        bookDays: "",
+        bookLimitNumber: "",
+        checkList: ["南图", "北图", "教师之家"],
+        bookOverdueFee: 0,
+        bookLimitLibrary: "",
       },
-      addFormRules: {},
-      searchs: [
-        {
-          value: "card_number",
-          label: "借阅证编号",
-        },
-        {
-          value: "username",
-          label: "用户名",
-        },
-        {
-          value: "rule_number",
-          label: "借阅规则",
-        },
-        {
-          value: "status",
-          label: "状态",
-        },
-      ],
-      bookRuleIdLists: [
-        {
-          ruleId: "18",
-          bookRuleId: "18",
-        },
-        {
-          ruleId: "357",
-          bookRuleId: "357",
-        },
-      ],
+      addFormRules: {
+        bookLimitDays: [
+          { required: true, message: "请输入限制天数", trigger: "blur" },
+        ],
+        bookLimitNumber: [
+          { required: true, message: "请输入限制数量", trigger: "blur" },
+        ],
+        bookOverdueFee: [
+          {
+            required: true,
+            message: "请输入正确的逾期每天费用",
+            trigger: "blur",
+          },
+        ],
+      },
       queryInfo: {
         pageNum: 1,
         pageSize: 5,
-        condition: "",
-        query: "",
       },
       total: 0,
-      title: "借阅证管理",
+      title: "借阅规则",
       json_fields: {
-        借阅证遍号: "cardNumber",
-        用户名: "username",
-        借阅规则: "ruleNumber",
-        状态: "status",
+        规则编号: "bookRuleId",
+        限制天数: "bookDays",
+        限制本数: "bookLimitNumber",
+        限制图书馆: "bookLimitLibrary",
+        逾期费用: "bookOverdueFee",
       },
       loading:true
     };
@@ -288,24 +278,21 @@ export default {
   methods: {
     handleSizeChange(val) {
       this.queryInfo.pageSize = val;
-      this.getStatementList();
+      this.getRuleList();
     },
     handleCurrentChange(val) {
       this.queryInfo.pageNum = val;
-      this.getStatementList();
+      this.getRuleList();
     },
     //让修改公告的对话框可见,并从数据库中回显数据
     async showEditDialog(id) {
       // 让修改公告的对话框可见
-      const { data: res } = await this.$http.get("admin/get_statement/" + id);
-      // console.log(res);
+      const {data:res} = await this.$http.get('admin/get_rule_ruleid/'+id)
       if (res.status !== 200) {
         return this.$message.error(res.msg);
       }
-      // 发送axios请求回显规则列表
-      const { data: res2 } = await this.$http.get("user/get_rulelist");
-      this.bookRuleIdLists = res2.data;
-      this.editForm = res.data;
+      
+      this.editForm = res.data
       this.editDialogVisible = true;
     },
     //监听修改对话框的关闭，一旦对话框关闭，就重置表单，回显数据
@@ -317,7 +304,7 @@ export default {
     async removeUserById(id) {
       //弹框，询问用户是否删除数据
       const confirmResult = await this.$confirm(
-        "此操作将永久删除该书籍, 是否继续?",
+        "此操作将永久删除该公告, 是否继续?",
         "提示",
         {
           confirmButtonText: "确定",
@@ -334,37 +321,32 @@ export default {
         return this.$message.info("已经取消删除");
       }
       //如果用户确认删除，那么下一步就是发送axios请求，检查响应状态码是否成功,成功则返回删除成功，否则返回删除失败
-      const { data: res } = await this.$http.delete(
-        "admin/delete_statement/" + id
-      );
-      console.log(res);
-      if (res.status !== 200) {
+      const {data:res} = await this.$http.delete('admin/delete_rule/'+id);
+       if (res.status !== 200) {
         return this.$message.error(res.msg);
       }
-      this.$message.success(res.msg);
-      this.getStatementList();
+      this.$message.success({
+        message: res.msg,
+        duration: 1500,
+      });
+      this.getRuleList();
     },
     //监听添加公告对话框的关闭，一旦对话框关闭，就重置表单
     addDialogClosed() {
       this.$refs.addFormRef.resetFields();
+      this.addForm.checkList = ["南图", "北图", "教师之家"];
     },
     //当用户点击发送新公告时，让添加对话框的visible改为true
-    async showAddDialog() {
-      // 发送axios请求回显规则列表
-      const { data: res } = await this.$http.get("user/get_rulelist");
-      this.bookRuleIdLists = res.data;
+    showAddDialog() {
       this.addDialogVisible = true;
     },
-    async getStatementList() {
+    async getRuleList() {
       this.loading = true;
       const { data: res } = await this.$http.post(
-        "admin/get_statementlist",
+        "admin/get_rulelist_page",
         this.queryInfo
       );
-      // console.log(res);
-      this.tableData = [];
       if (res.status !== 200) {
-        this.total = 0;
         this.loading = false;
         return this.$message.error(res.msg);
       }
@@ -376,31 +358,35 @@ export default {
        this.total = parseInt(res.data.total);
       this.loading = false;
     },
-    async addStatement() {
+    async addRule() {
+      const libraryList = this.addForm.checkList.join(',')
+      this.addForm.bookLimitLibrary = libraryList;
       const { data: res } = await this.$http.post(
-        "admin/add_statement",
+        "admin/add_rule",
         this.addForm
       );
       // console.log(res);
       if (res.status !== 200) {
         return this.$message.error(res.msg);
       }
-
-      this.$message.success(res.msg);
+      this.$message.success({
+        message: res.msg,
+        duration: 1500,
+      });
       this.addDialogVisible = false;
-      this.getStatementList();
+      this.getRuleList();
     },
-    async updateStatement() {
-      const { data: res } = await this.$http.post(
-        "admin/update_statement",
-        this.editForm
-      );
+    async updateRule(){
+      const {data:res} = await this.$http.put('admin/update_rule',this.editForm)
       // console.log(res);
       if (res.status !== 200) {
         return this.$message.error(res.msg);
       }
-      this.$message.success(res.msg);
-      this.getStatementList();
+      this.$message.success({
+        message: res.msg,
+        duration: 1500,
+      });
+      this.getRuleList();
       this.editDialogVisible = false;
     },
     downLoad() {
@@ -420,7 +406,7 @@ export default {
     }
   },
   created() {
-    this.getStatementList();
+    this.getRuleList();
   },
 };
 </script>
