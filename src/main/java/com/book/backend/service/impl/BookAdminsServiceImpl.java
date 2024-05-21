@@ -7,13 +7,16 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.book.backend.common.BasePage;
-import com.book.backend.constant.Constant;
 import com.book.backend.common.R;
+import com.book.backend.constant.Constant;
 import com.book.backend.mapper.BookAdminsMapper;
 import com.book.backend.pojo.BookAdmins;
+import com.book.backend.pojo.BooksBorrow;
 import com.book.backend.pojo.Violation;
+import com.book.backend.pojo.dto.BooksBorrowDTO;
 import com.book.backend.pojo.dto.ViolationDTO;
 import com.book.backend.service.BookAdminsService;
+import com.book.backend.service.BooksBorrowService;
 import com.book.backend.service.ViolationService;
 import com.book.backend.utils.JwtKit;
 import org.springframework.beans.BeanUtils;
@@ -40,12 +43,15 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
     private static final String SALT = "xiaobaitiao";
     @Resource
     private JwtKit jwtKit;
-
+    @Resource
+    private BooksBorrowService booksBorrowService;
     private ViolationService violationService;
+
     @Autowired
-    public BookAdminsServiceImpl(@Lazy ViolationService violationService){
+    public BookAdminsServiceImpl(@Lazy ViolationService violationService) {
         this.violationService = violationService;
     }
+
     /**
      * 1.接受图书管理员的参数(用户名，密码，姓名，邮箱)
      * 2.对密码进行md5加密,设置状态为1可用
@@ -66,6 +72,7 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
         }
         return R.success(null, "添加图书管理员成功");
     }
+
     /**
      * 1.将axios请求携带的json字符串反序列成实体类
      * 2.从实体类中获取用户名(判断空的情况)，从数据库中查询,如果不存在，直接返回响应状态码404和错误信息
@@ -95,7 +102,7 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
         if (Constant.DISABLE.equals(bookAdminOne.getStatus())) {
             return R.error("该图书管理员已被禁用");
         }
-        String password = DigestUtils.md5DigestAsHex((SALT+users.getPassword()).getBytes());
+        String password = DigestUtils.md5DigestAsHex((SALT + users.getPassword()).getBytes());
         if (!password.equals(bookAdminOne.getPassword())) {
             result.setStatus(404);
             return R.error("用户名或密码错误");
@@ -109,12 +116,13 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
         result.add("id", bookAdminOne.getBookAdminId());
         return result;
     }
+
     /**
-     *  1.先获取请求中的id
-     *  2.根据id到数据库中查询id是否存活
-     *  3.如果存在，查询出数据，
-     *  4.用户数据需要脱敏 将密码设为空
-     *  5.然后封装到R，设置响应状态码和请求信息,返回前端
+     * 1.先获取请求中的id
+     * 2.根据id到数据库中查询id是否存活
+     * 3.如果存在，查询出数据，
+     * 4.用户数据需要脱敏 将密码设为空
+     * 5.然后封装到R，设置响应状态码和请求信息,返回前端
      */
     @Override
     public R<BookAdmins> getUserData(BookAdmins bookAdmins) {
@@ -133,6 +141,7 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
         r.setMsg("获取图书管理员数据成功");
         return r;
     }
+
     /**
      * 1.获取页码，页数，条件和查询内容
      * 2.判断条件或者查询内容是否有空值情况
@@ -160,7 +169,7 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
             queryWrapper.isNotNull(Violation::getReturnDate).orderByAsc(Violation::getBorrowDate);
             Page<Violation> page = violationService.page(pageInfo, queryWrapper);
             if (page.getTotal() == 0) {
-                return R.error("借书报表为空");
+                return R.error("违章报表为空");
             }
             // 不为空，封装为DTO返回
             BeanUtils.copyProperties(pageInfo, dtoPage, "records");
@@ -191,7 +200,7 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
         queryWrapper.like(condition, query).isNotNull("return_date");
         Page<Violation> page = violationService.page(pageInfo, queryWrapper);
         if (page.getTotal() == 0) {
-            return R.error("借书报表为空");
+            return R.error("违章报表为空");
         }
         BeanUtils.copyProperties(pageInfo, dtoPage, "records");
         List<Violation> records = pageInfo.getRecords();
@@ -211,6 +220,51 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
         dtoPage.setRecords(dtoList);
         result.setData(dtoPage);
         result.setStatus(200);
+        result.setMsg("获取违章报表信息成功");
+        return result;
+    }
+
+    @Override
+    public R<Page<BooksBorrow>> getBorrowStatementV2(BasePage basePage) {
+        // 页数
+        int pageSize = basePage.getPageSize();
+        // 页码
+        int pageNum = basePage.getPageNum();
+        // 条件
+        String condition = basePage.getCondition();
+        // 内容
+        String query = basePage.getQuery();
+        Page<BooksBorrow> pageInfo = new Page<>(pageNum, pageSize);
+        Page<BooksBorrow> dtoPage = new Page<>(pageNum, pageSize);
+        R<Page<BooksBorrow>> result = new R<>();
+        // 有空值的情况
+        if (StringUtils.isBlank(condition) || StringUtils.isBlank(query)) {
+            LambdaQueryWrapper<BooksBorrow> queryWrapper = new LambdaQueryWrapper<>();
+            queryWrapper.isNotNull(BooksBorrow::getReturnDate).orderByAsc(BooksBorrow::getBorrowDate);
+            Page<BooksBorrow> page = booksBorrowService.page(pageInfo, queryWrapper);
+            if (page.getTotal() == 0) {
+                return R.error("借阅报表为空");
+            }
+            // 不为空，封装为DTO返回
+            BeanUtils.copyProperties(pageInfo, dtoPage, "records");
+            List<BooksBorrow> records = page.getRecords();
+            dtoPage.setRecords(records);
+            result.setData(dtoPage);
+            result.setStatus(200);
+            result.setMsg("获取借书报表信息成功");
+            return result;
+        }
+        QueryWrapper<BooksBorrow> queryWrapper = new QueryWrapper<>();
+        queryWrapper.like(condition, query).isNotNull("return_date");
+        Page<BooksBorrow> page = booksBorrowService.page(pageInfo, queryWrapper);
+        if (page.getTotal() == 0) {
+            return R.error("借书报表为空");
+        }
+        BeanUtils.copyProperties(pageInfo, dtoPage, "records");
+        List<BooksBorrow> records = pageInfo.getRecords();
+        dtoPage.setRecords(records);
+        result.setData(dtoPage);
+        result.setStatus(200);
         result.setMsg("获取借书报表信息成功");
         return result;
     }
@@ -228,6 +282,7 @@ public class BookAdminsServiceImpl extends ServiceImpl<BookAdminsMapper, BookAdm
         }
         return R.success(pageInfo, "获取图书管理员列表成功");
     }
+
     /**
      * 1.调用服务查询是否有该id对应的图书管理员
      * 2.如果存在，封装到数据实体类

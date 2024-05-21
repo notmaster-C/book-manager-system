@@ -3,7 +3,7 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
-      <el-breadcrumb-item>违章信息查询</el-breadcrumb-item>
+      <el-breadcrumb-item>借阅信息查询</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card shadow="always">
       <!-- 搜索内容和导出区域 -->
@@ -43,7 +43,7 @@
             :data="tableData"
             :fields="json_fields"
             :header="title"
-            name="违章信息查询.xls"
+            name="借阅信息查询.xls"
           >
             <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
             <el-button type="primary" class="el-icon-printer" size="mini"
@@ -80,11 +80,7 @@
         <el-table-column prop="bookNumber" label="书籍ID" sortable> </el-table-column>
         <el-table-column prop="borrowDate" label="借阅时间" sortable> </el-table-column>
         <el-table-column prop="closeDate" label="截止时间" sortable> </el-table-column>
-        <el-table-column prop="returnDate" label="归还时间" sortable> </el-table-column>
-        <el-table-column prop="violationMessage" label="违章信息"> </el-table-column>
-        <el-table-column prop="violationAmt" label="扣款金额(元)"> </el-table-column>
-        <el-table-column prop="violationAdmin" label="处理人"> </el-table-column>
-      </el-table>
+        <el-table-column prop="returnDate" label="归还时间" sortable> </el-table-column> </el-table>
       <!-- 分页查询区域 -->
       <el-pagination
       @size-change="handleSizeChange"
@@ -124,14 +120,6 @@ export default {
           value: "return_date",
           label: "归还时间",
         },
-        {
-          value: "violation_message",
-          label: "违章信息",
-        },
-        {
-          value: "violation_amt",
-          label: "扣款金额",
-        },
       ],
       tableData: [],
         queryInfo: {
@@ -141,7 +129,7 @@ export default {
         query: "",
       },
       total: 0,
-      title: "违章信息查询",
+      title: "借阅信息查询",
       json_fields: {
         ID: "violationId",
         借阅证编号: "cardNumber",
@@ -149,9 +137,6 @@ export default {
         借阅日期: "borrowDate",
         截止日期: "closeDate",
         归还日期:"returnDate",
-        违章信息:"violationMessage",
-        扣款金额:"violationAmt",
-        处理人:"violationAdmin"
       },
       loading:true
     };
@@ -167,7 +152,7 @@ export default {
       },
       async getBorrowStatement(){
         this.loading = true;
-        const {data:res} = await this.$http.post('bookadmin/get_borrow_statement',this.queryInfo)
+        const {data:res} = await this.$http.post('bookadmin/get_borrow_statementV2',this.queryInfo)
         // console.log(res);
         this.tableData = [];
       if (res.status !== 200) {

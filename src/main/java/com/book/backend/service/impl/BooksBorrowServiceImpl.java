@@ -1,5 +1,6 @@
 package com.book.backend.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.LocalDateTimeUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -7,26 +8,27 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.book.backend.common.BasePage;
-import com.book.backend.constant.Constant;
 import com.book.backend.common.R;
+import com.book.backend.constant.Constant;
 import com.book.backend.mapper.BooksBorrowMapper;
-import com.book.backend.pojo.Books;
-import com.book.backend.pojo.BooksBorrow;
-import com.book.backend.pojo.Violation;
+import com.book.backend.pojo.*;
 import com.book.backend.pojo.dto.ViolationDTO;
-import com.book.backend.service.BooksBorrowService;
-import com.book.backend.service.BooksService;
-import com.book.backend.service.ViolationService;
+import com.book.backend.service.*;
+import org.apache.poi.hpsf.Decimal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static com.book.backend.pojo.Violation.isViolation;
 
 /**
  * @author 程序员小白条
@@ -40,6 +42,10 @@ public class BooksBorrowServiceImpl extends ServiceImpl<BooksBorrowMapper, Books
     private ViolationService violationService;
 
     private BooksService booksService;
+    @Resource
+    private UsersService usersService;
+    @Resource
+    private BookRuleService bookRuleService;
 
     @Autowired
     public BooksBorrowServiceImpl(@Lazy BooksService booksService) {
@@ -121,12 +127,26 @@ public class BooksBorrowServiceImpl extends ServiceImpl<BooksBorrowMapper, Books
         LocalDateTime borrow = LocalDateTimeUtil.parse(s[0] + "T" + s[1]);
         LocalDateTime close = LocalDateTimeUtil.parse(s1[0] + "T" + s1[1]);
         Duration between = LocalDateTimeUtil.between(borrow, close);
-        // 获取逾期的天数
+        // 获取剩余的天数
         long expireDay = between.toDays();
         ViolationDTO violationDTO = new ViolationDTO();
         violationDTO.setExpireDays(expireDay);
         violationDTO.setBookNumber(bookNumber);
         violationDTO.setCloseDate(closeDate);
+        // 逾期返回金额
+        if (expireDay<0){
+            Long cardNumber = bookBorrowRecord.getCardNumber();
+            LambdaQueryWrapper<Users> userQuery = new LambdaQueryWrapper<>();
+            LambdaQueryWrapper<BookRule> ruleQuery = new LambdaQueryWrapper<>();
+            userQuery.eq(Users::getCardNumber, cardNumber);
+            Users user = usersService.getOne(userQuery);
+            ruleQuery.eq(BookRule::getBookRuleId,user.getRuleNumber());
+            BookRule one = bookRuleService.getOne(ruleQuery);
+            double amt = one.getBookOverdueFee() * expireDay;
+            violationDTO.setViolationAmt(amt);
+        }
+
+
         R<ViolationDTO> result = new R<>();
         result.setData(violationDTO);
         result.setStatus(200);
@@ -137,21 +157,18 @@ public class BooksBorrowServiceImpl extends ServiceImpl<BooksBorrowMapper, Books
     /**
      * 1.获取归还日期和违章信息和图书编号,判断参数是否有异常
      * 2.根据图书编号，查询归还日期为空的记录,更新图书表
-     * 3.更新违章表
+     * 3.如果有违章信息或者逾期了,更新违章表
      * 4.更新图书表，图书编号的借出状态
      * 5.三个表都更新则返回成功的响应状态码和请求信息，否则返回失败信息
      */
     @Transactional
     @Override
     public R<String> returnBook(Violation violation) {
-
         Long bookNumber = violation.getBookNumber();
         LocalDateTime returnDate = violation.getReturnDate();
         if (returnDate == null) {
             return R.error("归还日期不能为空");
         }
-        String violationMessage = violation.getViolationMessage();
-        Integer violationAdminId = violation.getViolationAdminId();
         LambdaQueryWrapper<Violation> queryWrapper = new LambdaQueryWrapper<>();
         LambdaQueryWrapper<BooksBorrow> queryWrapper1 = new LambdaQueryWrapper<>();
         LambdaQueryWrapper<Books> queryWrapper2 = new LambdaQueryWrapper<>();
@@ -159,22 +176,30 @@ public class BooksBorrowServiceImpl extends ServiceImpl<BooksBorrowMapper, Books
         queryWrapper.eq(Violation::getBookNumber, bookNumber).isNull(Violation::getReturnDate);
         queryWrapper1.eq(BooksBorrow::getBookNumber, bookNumber).isNull(BooksBorrow::getReturnDate);
         queryWrapper2.eq(Books::getBookNumber, bookNumber);
-        Violation violation1 = violationService.getOne(queryWrapper);
+        //如果库里没有借阅信息或者图书信息,返回失败;
         BooksBorrow booksBorrow = this.getOne(queryWrapper1);
         Books book = booksService.getOne(queryWrapper2);
-        if (violation1 == null || booksBorrow == null || book == null) {
+        if (booksBorrow == null || book == null) {
             return R.error("归还图书失败");
         }
-
-        violation1.setViolationMessage(violationMessage);
-        violation1.setReturnDate(returnDate);
-        violation1.setViolationAdminId(violationAdminId);
+        Long cardNumber = booksBorrow.getCardNumber();
+        violation.setCardNumber(cardNumber);
+        violation.setBorrowDate(booksBorrow.getBorrowDate());
+        violation.setCloseDate(booksBorrow.getCloseDate());
+        boolean save1 = true;
+        //判断是否违章,有违章,需要付款
+        if (isViolation(violation)) {
+            R r = usersService.updateAccountAmt(cardNumber, BigDecimal.valueOf(violation.getViolationAmt()));
+            if(!r.getStatus().equals(200)){
+                return R.error("用户扣款失败");
+            }
+            save1 = violationService.save(violation);
+        }
         booksBorrow.setReturnDate(returnDate);
         book.setBookStatus(Constant.BOOKAVAILABLE);
-        boolean update1 = violationService.update(violation1, queryWrapper);
         boolean update2 = this.update(booksBorrow, queryWrapper1);
         boolean update3 = booksService.update(book, queryWrapper2);
-        if (!update1 || !update2 || !update3) {
+        if (!save1 || !update2 || !update3) {
             return R.error("归还图书失败");
         }
 

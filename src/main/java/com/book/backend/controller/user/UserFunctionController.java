@@ -117,7 +117,17 @@ public class UserFunctionController {
     public R<Page<ViolationDTO>> getViolationListByPage(@RequestBody BasePage basePage) {
         return violationService.getViolationListByPage(basePage);
     }
-
+    /**
+     * 钱包充值
+     *
+     * @param userId 用户信息
+     * @return R
+     */
+    @GetMapping("payment/{userId}")
+    @ApiOperation("钱包充值")
+    public R<String> updateAmt(@PathVariable("userId") Long userId) {
+        return usersService.updateAmt(userId);
+    }
     /**
      * 获取弹幕列表
      *

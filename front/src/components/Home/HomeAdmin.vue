@@ -68,11 +68,18 @@
             <span slot="title">借阅证管理</span>
           </el-menu-item>
           <el-menu-item
+            index="statementsearchV2"
+            @click="saveNavState('statementsearchV2')"
+          >
+            <i class="el-icon-search"></i>
+            <span slot="title">借阅信息查询</span>
+          </el-menu-item>
+          <el-menu-item
             index="statementsearch"
             @click="saveNavState('statementsearch')"
           >
             <i class="el-icon-search"></i>
-            <span slot="title">借阅信息查询</span>
+            <span slot="title">违章信息查询</span>
           </el-menu-item>
           <el-menu-item
             index="statementrulemanage"
@@ -108,7 +115,7 @@
       <el-main>
         <!-- 路由占位符 -->
         <router-view></router-view>
-        <div class="footer">
+        <!-- <div class="footer">
           <el-popover placement="top-start" :width="150" trigger="hover">
             <p slot="reference"> 联系作者|   ©2022-2023 By 小白条<br /> </p>
             <img
@@ -124,7 +131,7 @@
             />
             浙公网安备33028202001002号
           </a>
-        </div>
+        </div> -->
       </el-main>
     </el-container>
   </el-container>

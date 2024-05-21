@@ -88,7 +88,7 @@
       <el-main>
         <!-- 路由占位符 -->
         <router-view></router-view>
-        <div class="footer">
+        <!-- <div class="footer">
           <el-popover placement="top-start" :width="150" trigger="hover">
             <p slot="reference"> 联系作者|   ©2022-2023 By 小白条<br /> </p>
             <img
@@ -104,7 +104,7 @@
             />
             浙公网安备33028202001002号
           </a>
-        </div>
+        </div> -->
       </el-main>
     </el-container>
   </el-container>

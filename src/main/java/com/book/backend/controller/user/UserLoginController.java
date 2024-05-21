@@ -31,7 +31,17 @@ public class UserLoginController {
     public R login(@RequestBody Users users) {
         return usersService.login(users);
     }
-
+    /**
+     * 借阅用户注册
+     *
+     * @param users 借阅者用户
+     * @return 返回R通用数据
+     */
+    @PostMapping("/register")
+    @ApiOperation("用户登录")
+    public R register(@RequestBody Users users) {
+        return usersService.login(users);
+    }
     /**
      * 根据用户id传给用户所需的信息
      *

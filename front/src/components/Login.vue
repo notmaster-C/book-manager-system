@@ -17,28 +17,38 @@
           <el-input v-model="loginForm.password" prefix-icon="iconfont icon-tianchongxing-" type="password"
             @keyup.enter.native="login" :show-password="true"></el-input>
         </el-form-item>
+        <!-- 身份选择 -->
+        <el-form-item prop="role">
+          <el-select v-model="loginForm.role" placeholder="请选择身份" @change="resetLogin">
+            <el-option label="普通用户" value="1"></el-option>
+            <el-option label="图书管理员" value="2"></el-option>
+            <el-option label="图书馆管理员" value="3"></el-option>
+          </el-select>
+        </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item class="btns">
           <el-button type="primary" @click="login" :loading="loginLoading">登录</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
+          <!-- <span style="cursor: pointer;font-weight: bold;color:black;margin-bottom: 10px" @click="goManage">
+            管理员登录>
+          </span> -->
         </el-form-item>
       </el-form>
     </div>
-<!--    粒子插件特效-->
-    <vue-particles class="login-bg" color="#39AFFD" :particleOpacity="0.7" :particlesNumber="100" shapeType="circle"
+    <!--    粒子插件特效-->
+    <!-- <vue-particles class="login-bg" color="#39AFFD" :particleOpacity="0.7" :particlesNumber="100" shapeType="circle"
       :particleSize="4" linesColor="#8DD1FE" :linesWidth="1" :lineLinked="true" :lineOpacity="0.4" :linesDistance="150"
       :moveSpeed="3" :hoverEffect="true" hoverMode="grab" :clickEffect="true" clickMode="push">
-    </vue-particles>
-    <div class="footer">
+    </vue-particles> -->
+    <!-- <div class="footer">
       <span style="font-weight: bold;color:white;margin-bottom: 10px">
         登录页面切换
-        <!-- <i class="iconfont icon-haoyou " @click="goUser"></i> -->
       </span>
       <span>
         <i class="iconfont icon-guanliyuan" @click="goManage"></i>
       </span>
-    </div>
-    <div class="footer2">
+    </div> -->
+    <!-- <div class="footer2">
 
       <el-popover placement="top-start" :width="150" trigger="hover">
         <p slot="reference"> 联系作者|   ©2022-2023 By 小白条<br /> </p>
@@ -55,7 +65,7 @@
         />
         浙公网安备33028202001002号
       </a>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -65,8 +75,9 @@ export default {
     return {
       //登录表单
       loginForm: {
-        username: "相思断红肠",
+        username: "账号1",
         password: "123456",
+        role: '1',
       },
 
       //登录表单规则的验证对象
@@ -97,6 +108,23 @@ export default {
     resetLoginForm() {
       this.$refs.loginFormRef.resetFields();
     },
+    resetLogin() {
+      switch (this.loginForm.role) {
+        case '3':
+          this.loginForm.username = 'root';
+          this.loginForm.password = '123456';
+          break;
+        case '2':
+          this.loginForm.username = 'admin';
+          this.loginForm.password = '123456';
+          break;
+        default:
+          this.loginForm.username = '账号1';
+          this.loginForm.password = '123456';
+          break;
+      }
+
+    },
     login() {
       this.$refs.loginFormRef.validate(async (valid) => {
         // console.log(valid);
@@ -109,24 +137,62 @@ export default {
         const salt = "xiaobaitiao";
         const username = this.loginForm.username;
         const password = this.loginForm.password;
-        //向数据库发送axios请求，如果登录成功，就跳转
-        const { data: res } = await this.$http.post(
-          "user/login",
-          {
-            username,
-            password
+        const role = this.loginForm.role;
+        if (role === '1') {
+          //向数据库发送axios请求，如果登录成功，就跳转
+          const { data: res } = await this.$http.post(
+            "user/login",
+            {
+              username,
+              password
+            }
+          );
+          if (res.status !== 200) {
+            this.loginLoading = false;
+            return this.$message.error(res.msg);
           }
-        );
-        if (res.status !== 200) {
+          // console.log(res);
+          this.$message.success("登录成功");
           this.loginLoading = false;
-          return this.$message.error(res.msg);
+          window.sessionStorage.setItem("token", res.map.token);
+          window.sessionStorage.setItem("userId", res.map.id);
+          this.$router.push("/home"); //跳转到home页面下
         }
-        // console.log(res);
-        this.$message.success("登录成功");
-        this.loginLoading = false;
-        window.sessionStorage.setItem("token", res.map.token);
-        window.sessionStorage.setItem("userId", res.map.id);
-        this.$router.push("/home"); //跳转到home页面下
+        if (role === '2') {
+          const { data: res } = await this.$http.post("bookadmin/login", {
+            username,
+            password,
+          });
+          // console.log(res);
+          if (res.status !== 200) {
+            this.loginLoading = false;
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("登录成功");
+          this.loginLoading = false;
+          window.sessionStorage.setItem("token", res.map.token);
+          window.sessionStorage.setItem("bookAdminId", res.map.id);
+          this.$router.push("/homemange");
+        }
+        if (role === '3') {
+          const { data: res } = await this.$http.post(
+            "admin/login",
+            {
+              username,
+              password
+            }
+          );
+          if (res.status !== 200) {
+            this.loginLoading = false;
+            return this.$message.error(res.msg);
+          }
+          this.$message.success("登录成功");
+          this.loginLoading = false;
+          // console.log(res);
+          window.sessionStorage.setItem("token", res.map.token);
+          window.sessionStorage.setItem("adminId", res.map.id);
+          this.$router.push("/homeadmin");
+        }
       });
     },
     goUser() {
@@ -153,13 +219,13 @@ export default {
 
 .login_container {
   // background-color: #2b4b6b;
-  background: url(https://xxx.xiaobaitiao.icu/img/icu/202312211236280.jpg) no-repeat 0px 0px;
+  background: url(https://s.cn.bing.net/th?id=OHR.TrinityDublin_ZH-CN9521778819_1920x1080.webp&qlt=50) no-repeat 0px 0px;
   background-size: cover;
   height: 100%;
 }
 
 .login_box {
-  height: 300px;
+  height: 366px;
   width: 450px;
   background-color: #fff;
   border-radius: 3px;

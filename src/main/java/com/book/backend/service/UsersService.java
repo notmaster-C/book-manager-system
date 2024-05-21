@@ -6,8 +6,11 @@ import com.book.backend.common.R;
 import com.book.backend.pojo.Users;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.book.backend.pojo.dto.UsersDTO;
+import org.apache.poi.hpsf.Decimal;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
+
+import java.math.BigDecimal;
 
 /**
  * @author 程序员小白条
@@ -30,6 +33,8 @@ public interface UsersService extends IService<Users> {
      */
     R<String> updatePassword(Users users);
 
+    R<String> updateAmt(Long userId);
+
     /**
      * 借阅用户登录
      *
@@ -37,7 +42,14 @@ public interface UsersService extends IService<Users> {
      * @return 返回R通用数据
      */
     R login(Users users);
-
+    /**
+     * 违章扣款
+     *
+     * @param cardNumber 借阅证号
+     * @param violationAmt 扣款金额
+     * @return 返回R通用数据
+     */
+    R updateAccountAmt(Long cardNumber , BigDecimal  violationAmt);
     /**
      * 根据用户id传给用户所需的信息
      * @param users 用户

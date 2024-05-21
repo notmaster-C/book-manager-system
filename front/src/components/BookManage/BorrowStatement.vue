@@ -3,12 +3,12 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
-      <el-breadcrumb-item>借书报表</el-breadcrumb-item>
+      <el-breadcrumb-item>违章报表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card shadow="always">
       <!-- 搜索内容和导出区域 -->
       <el-row>
-        <el-col :span="6"
+        <el-col :span="6" 
           >条件搜索:<el-select
             v-model="queryInfo.condition"
             filterable
@@ -43,7 +43,7 @@
             :data="tableData"
             :fields="json_fields"
             :header="title"
-            name="借书报表.xls"
+            name="违章报表.xls"
           >
             <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
             <el-button type="primary" class="el-icon-printer" size="mini"
@@ -91,6 +91,8 @@
         <el-table-column prop="returnDate" label="归还日期" sortable>
         </el-table-column>
         <el-table-column prop="violationMessage" label="违章信息">
+        </el-table-column>
+        <el-table-column prop="violationAmt" label="扣款金额(元)">
         </el-table-column>
         <el-table-column prop="violationAdmin" label="处理人">
         </el-table-column>
@@ -148,7 +150,7 @@ export default {
         query: "",
       },
       total: 0,
-      title: "借书报表",
+      title: "违章报表",
       json_fields: {
         借阅证编号: "cardNumber",
         图书编号: "bookNumber",
@@ -156,6 +158,7 @@ export default {
         截止日期: "closeDate",
         归还日期: "returnDate",
         违章信息: "violationMessage",
+        扣款金额: "violationAmt",
         处理人: "violationAdmin",
       },
       loading:true

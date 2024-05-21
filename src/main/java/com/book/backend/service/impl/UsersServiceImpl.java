@@ -16,12 +16,14 @@ import com.book.backend.pojo.Users;
 import com.book.backend.pojo.dto.UsersDTO;
 import com.book.backend.service.UsersService;
 import com.book.backend.utils.JwtKit;
+import org.apache.poi.hpsf.Decimal;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.DigestUtils;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 
 /**
  * @author 程序员小白条
@@ -68,6 +70,26 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         result.setMsg("获取用户信息成功");
         return result;
     }
+    @Override
+    public R<String> updateAmt(Long userId){
+        // 条件构造器
+        LambdaQueryWrapper<Users> queryWrapper = new LambdaQueryWrapper<>();
+        // 当userId!=null时,调用条件构造器
+        queryWrapper.eq(userId != null, Users::getUserId, userId);
+        Users userOne = this.getOne(queryWrapper);
+        BigDecimal accountAmt = userOne.getAccountAmt();
+        accountAmt =new BigDecimal(50).add(accountAmt);
+        userOne.setAccountAmt(accountAmt);
+        // 当用户不存在时，返回错误信息
+        if (userOne == null) {
+            return R.error("充值失败");
+        }
+        boolean update = this.update(userOne, queryWrapper);
+        if (!update) {
+            return R.error("充值失败");
+        }
+        return R.success(null, "充值成功");
+    }
 
     /**
      * 1.获取用户传输的密码和用户id
@@ -94,11 +116,10 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         String saltPassword = SALT+password;
         String md5Password = DigestUtils.md5DigestAsHex(saltPassword.getBytes());
         userOne.setPassword(md5Password);
-        // todo 取消注释即可成功修改密码 我这边防止有人恶意修改默认用户导致其他游客访问不了，因此取消修改密码的逻辑
-//        boolean update = this.update(userOne, queryWrapper);
-//        if (!update) {
-//            return R.error("更改密码失败");
-//        }
+        boolean update = this.update(userOne, queryWrapper);
+        if (!update) {
+            return R.error("更改密码失败");
+        }
         return R.success(null, "更改密码成功");
     }
 
@@ -145,6 +166,32 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         result.setMsg("登录成功");
         result.add("id", user.getUserId());
         return result;
+    }
+
+    @Override
+    public R updateAccountAmt(Long cardNumber, BigDecimal violationAmt) {
+        R result = new R<>();
+        // 判断用户是否存在
+        LambdaUpdateWrapper<Users> userWrapper = new LambdaUpdateWrapper<>();
+        userWrapper.eq(Users::getCardNumber, cardNumber);
+        Users user = this.getOne(userWrapper);
+        if (user == null) {
+            result.setStatus(404);
+            return R.error("用户名不存在");
+        }
+        // 用户存在 判断是否为禁用状态
+        if (Constant.DISABLE.equals(user.getStatus())) {
+            return R.error("账号已被禁止登录");
+        }
+        BigDecimal  accountAmt = user.getAccountAmt();
+        //加负数就可以扣款
+        BigDecimal  accountAmt1 = accountAmt.add(violationAmt);
+        user.setAccountAmt(accountAmt1);
+        boolean update = this.update(user, userWrapper);
+        if (!update) {
+            return R.error("扣款失败");
+        }
+        return R.success(null, "扣款成功");
     }
 
     /**

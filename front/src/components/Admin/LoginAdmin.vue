@@ -4,7 +4,7 @@
     <div class="login_box">
       <!-- 头像区域 -->
       <div class="avatar_box">
-        <img src="https://xxx.xiaobaitiao.icu/img/icu/202312211243634.jpg" alt=""/>
+        <img src="https://tse2-mm.cn.bing.net/th/id/OIP-C.2RUs7BSTIs--tq5oQMW4fAAAAA?w=184&h=183&c=7&r=0&o=5&pid=1.7" alt=""/>
       </div>
       <!-- 登录表单区域 -->
       <el-form
@@ -35,6 +35,9 @@
         <el-form-item class="btns">
           <el-button type="primary" @click="login" :loading="loginLoading">登录</el-button>
           <el-button type="info" @click="resetLoginForm">重置</el-button>
+          <span style="font-weight: bold;color:white;margin-bottom: 10px"  @click="goUser">
+        登录页面切换
+      </span>
         </el-form-item>
       </el-form>
     </div>
@@ -64,7 +67,7 @@
       <span><i class="iconfont icon-haoyou" @click="goUser"></i></span>
 
     </div>
-    <div class="footer2">
+    <!-- <div class="footer2">
       <el-popover placement="top-start" :width="150" trigger="hover">
         <p slot="reference"> 联系作者|   ©2022-2023 By 小白条<br /> </p>
         <img
@@ -80,7 +83,7 @@
         />
         浙公网安备33028202001002号
       </a>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -173,7 +176,7 @@ export default {
 
 .login_container {
   // background-color: #2b4b6b;
-  background: url(https://xxx.xiaobaitiao.icu/img/icu/202312211236280.jpg) no-repeat 0px 0px;
+  background: url(https://s.cn.bing.net/th?id=OHR.TrinityDublin_ZH-CN9521778819_1920x1080.webp&qlt=50) no-repeat 0px 0px;
   background-size: cover;
   height: 100%;
 }

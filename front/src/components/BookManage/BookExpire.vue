@@ -5,7 +5,7 @@
     </div>
     <div class="banner">
       <div class="expireDays">
-        <p>还剩{{this.expireInfo.expireDays}}天</p>
+        <p>{{ this.expireInfo.expireDays >= 0 ? '还剩' + this.expireInfo.expireDays + '天' : '逾期' + Math.abs(this.expireInfo.expireDays) + '天' }}</p>
       </div>
       <div class="bookNumber">
         <el-input v-model="expireInfo.bookNumber" :readonly="true">
@@ -32,15 +32,30 @@
           ></el-button
         ></el-input>
       </div>
+
+      <div class="violationAmt" v-if="(!!expireInfo.violationAmt&&expireInfo.violationAmt !== 0)||returnInfo.violationMessage!==''">
+        <el-input
+          type="number"
+          v-model="expireInfo.violationAmt"
+          placeholder="若有违章,则请填写"
+        >
+        <template slot="prepend">需缴费金额</template>
+          <el-button
+            slot="prepend"
+            icon="iconfont icon-liuyan"
+          ></el-button>
+        </el-input>
+      </div>
+
       <div class="adminId">
-     
         <el-input  v-model="expireInfo.bookAdminId" :readonly="true">
             <template slot="prepend">管理员编号</template>
           <el-button slot="prepend" icon="el-icon-s-custom"></el-button
         ></el-input>
       </div>
+
       <div class="returnDate">
-        <el-date-picker
+        <el-date-picker slot="prepend"
           v-model="returnInfo.returnDate"
           type="datetime"
           placeholder="选择归还日期时间"
@@ -48,9 +63,11 @@
           value-format="yyyy-MM-dd HH:mm:ss"
           prefix-icon="el-icon-date"
         >
-       
         </el-date-picker>
       </div>
+
+
+
       <div class="return_button">
         <el-button type="warning" @click="returnBook">归还</el-button>
       </div>
@@ -108,6 +125,7 @@ export default {
           return;
         }
         this.returnInfo.violationAdminId = parseInt(window.sessionStorage.getItem('bookAdminId'))
+        this.returnInfo.violationAmt = parseFloat(this.expireInfo.violationAmt)
         const {data:res} = await this.$http.post('bookadmin/return_book',this.returnInfo)
         // console.log(res);
         if(res.status !== 200){

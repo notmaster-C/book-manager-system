@@ -3,8 +3,10 @@ package com.book.backend.pojo;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
+import org.apache.poi.hpsf.Decimal;
 
 /**
  *
@@ -44,6 +46,10 @@ public class Users implements Serializable {
      * 规则编号 可以自定义也就是权限功能
      */
     private Integer ruleNumber;
+    /**
+     * 账户余额
+     */
+    private BigDecimal  accountAmt;
 
     /**
      * 1表示可用 0表示禁用

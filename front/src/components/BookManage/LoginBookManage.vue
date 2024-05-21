@@ -5,7 +5,7 @@
       <!-- 头像区域 -->
       <div class="avatar_box">
         <img
-          src="https://xxx.xiaobaitiao.icu/img/icu/202312211243634.jpg"
+          src="https://tse4-mm.cn.bing.net/th/id/OIP-C.dB3WhWCbbODt_6wFjxWBNQAAAA?w=166&h=180&c=7&r=0&o=5&pid=1.7"
           alt=""
         />
       </div>
@@ -71,7 +71,7 @@
         <i class="iconfont icon-guanliyuanrenzheng" @click="goAdmin"></i>
       </span>
     </div>
-    <div class="footer2">
+    <!-- <div class="footer2">
       <el-popover placement="top-start" :width="150" trigger="hover">
         <p slot="reference"> 联系作者|   ©2022-2023 By 小白条<br /> </p>
         <img
@@ -87,7 +87,7 @@
         />
         浙公网安备33028202001002号
       </a>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -183,8 +183,7 @@ export default {
 
 .login_container {
   // background-color: #2b4b6b;
-  background: url(https://xxx.xiaobaitiao.icu/img/icu/202312211236280.jpg) no-repeat
-    0px 0px;
+  background: url(https://s.cn.bing.net/th?id=OHR.TrinityDublin_ZH-CN9521778819_1920x1080.webp&qlt=50) no-repeat 0px 0px;
   background-size: cover;
   height: 100%;
 }

@@ -5,6 +5,7 @@ import com.book.backend.common.BasePage;
 import com.book.backend.common.R;
 import com.book.backend.pojo.BookAdmins;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.book.backend.pojo.BooksBorrow;
 import com.book.backend.pojo.dto.ViolationDTO;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -37,12 +38,19 @@ public interface BookAdminsService extends IService<BookAdmins> {
      */
     R<BookAdmins> getUserData( BookAdmins bookAdmins);
     /**
-     * 获取借书报表
+     * 获取违章报表
      *
      * @param basePage 接受分页构造器和模糊查询的传参
      * @return R<Page < ViolationDTO>>
      */
     R<Page<ViolationDTO>> getBorrowStatement( BasePage basePage);
+    /**
+     * 获取借书报表
+     *
+     * @param basePage 接受分页构造器和模糊查询的传参
+     * @return R<Page < ViolationDTO>>
+     */
+    R<Page<BooksBorrow>> getBorrowStatementV2(BasePage basePage);
     /**
      * 获取图书管理员的列表
      *

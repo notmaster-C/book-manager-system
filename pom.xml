@@ -187,7 +187,7 @@
                 </configuration>
             </plugin>
         </plugins>
-        <finalName>my-app</finalName> <!-- 设置打包后的JAR文件名 -->
+        <finalName>book-system-manager</finalName> <!-- 设置打包后的JAR文件名 -->
     </build>
 
     <profiles>

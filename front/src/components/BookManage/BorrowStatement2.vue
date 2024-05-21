@@ -3,12 +3,12 @@
     <!-- 面包屑导航区域 -->
     <el-breadcrumb separator-class="el-icon-arrow-right">
       <el-breadcrumb-item>首页</el-breadcrumb-item>
-      <el-breadcrumb-item>违章信息查询</el-breadcrumb-item>
+      <el-breadcrumb-item>借阅报表</el-breadcrumb-item>
     </el-breadcrumb>
     <el-card shadow="always">
       <!-- 搜索内容和导出区域 -->
       <el-row>
-        <el-col :span="6"
+        <el-col :span="6" 
           >条件搜索:<el-select
             v-model="queryInfo.condition"
             filterable
@@ -29,7 +29,7 @@
             placeholder="请输入内容"
             v-model="queryInfo.query"
             class="input-with-select"
-            @keyup.enter.native = "getBorrowStatement"
+            @keyup.enter.native="getBorrowStatement"
           >
             <el-button
               slot="append"
@@ -43,7 +43,7 @@
             :data="tableData"
             :fields="json_fields"
             :header="title"
-            name="违章信息查询.xls"
+            name="借阅报表.xls"
           >
             <!-- 上面可以自定义自己的样式，还可以引用其他组件button -->
             <el-button type="primary" class="el-icon-printer" size="mini"
@@ -68,33 +68,40 @@
        </el-col>
       </el-row>
       <!-- 表格区域 -->
-      <el-table :data="tableData" border style="width: 100%" stripe id="pdfDom" :default-sort = "{prop: 'violationId', order: 'ascending'}"
-      v-loading="loading"
+      <el-table
+        :data="tableData"
+        border
+        style="width: 100%"
+        stripe
+        id="pdfDom"
+        :default-sort="{ prop: 'cardNumber', order: 'ascending' }"
+        v-loading="loading"
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
-        element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-table-column prop="violationId" label="ID" sortable>
+        element-loading-background="rgba(0, 0, 0, 0.8)"
+      >
+        <el-table-column prop="cardNumber" label="借阅证编号" sortable>
         </el-table-column>
-        <el-table-column prop="cardNumber" label="借阅证号" sortable>
+        <el-table-column prop="bookNumber" label="图书编号" sortable>
         </el-table-column>
-        <el-table-column prop="bookNumber" label="书籍ID" sortable> </el-table-column>
-        <el-table-column prop="borrowDate" label="借阅时间" sortable> </el-table-column>
-        <el-table-column prop="closeDate" label="截止时间" sortable> </el-table-column>
-        <el-table-column prop="returnDate" label="归还时间" sortable> </el-table-column>
-        <el-table-column prop="violationMessage" label="违章信息"> </el-table-column>
-        <el-table-column prop="violationAmt" label="扣款金额(元)"> </el-table-column>
-        <el-table-column prop="violationAdmin" label="处理人"> </el-table-column>
+        <el-table-column prop="borrowDate" label="借阅日期" sortable>
+        </el-table-column>
+        <el-table-column prop="closeDate" label="截止日期" sortable>
+        </el-table-column>
+        <el-table-column prop="returnDate" label="归还日期" sortable>
+        </el-table-column>
       </el-table>
       <!-- 分页查询区域 -->
       <el-pagination
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-      :current-page="queryInfo.pageNum"
-      :page-sizes="[5, 10, 20, 50,100]"
-      :page-size="queryInfo.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="this.total">
-    </el-pagination>
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="queryInfo.pageNum"
+        :page-sizes="[5, 10, 20, 50, 100]"
+        :page-size="queryInfo.pageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="this.total"
+      >
+      </el-pagination>
     </el-card>
   </div>
 </template>
@@ -110,66 +117,59 @@ export default {
         },
         {
           value: "book_number",
-          label: "书籍ID",
+          label: "图书编号",
         },
         {
           value: "borrow_date",
-          label: "借阅时间",
+          label: "借阅日期",
         },
         {
           value: "close_date",
-          label: "截止时间",
+          label: "截止日期",
         },
         {
           value: "return_date",
-          label: "归还时间",
-        },
-        {
-          value: "violation_message",
-          label: "违章信息",
-        },
-        {
-          value: "violation_amt",
-          label: "扣款金额",
+          label: "归还日期",
         },
       ],
       tableData: [],
-        queryInfo: {
+      queryInfo: {
         pageNum: 1,
         pageSize: 5,
         condition: "",
         query: "",
       },
       total: 0,
-      title: "违章信息查询",
+      title: "借阅报表",
       json_fields: {
-        ID: "violationId",
         借阅证编号: "cardNumber",
-        书籍编号: "bookNumber",
+        图书编号: "bookNumber",
         借阅日期: "borrowDate",
         截止日期: "closeDate",
-        归还日期:"returnDate",
-        违章信息:"violationMessage",
-        扣款金额:"violationAmt",
-        处理人:"violationAdmin"
+        归还日期: "returnDate",
       },
       loading:true
     };
   },
   methods: {
-      handleSizeChange(val) {
-        this.queryInfo.pageSize = val;
-        this.getBorrowStatement();
-      },
-      handleCurrentChange(val) {
-        this.queryInfo.pageNum = val;
-        this.getBorrowStatement();
-      },
-      async getBorrowStatement(){
-        this.loading = true;
-        const {data:res} = await this.$http.post('bookadmin/get_borrow_statement',this.queryInfo)
-        // console.log(res);
-        this.tableData = [];
+    handleSizeChange(val) {
+      this.queryInfo.pageSize = val;
+
+      this.getBorrowStatement();
+    },
+    handleCurrentChange(val) {
+      this.queryInfo.pageNum = val;
+
+      this.getBorrowStatement();
+    },
+    async getBorrowStatement() {
+      this.loading = true;
+      const { data: res } = await this.$http.post(
+        "bookadmin/get_borrow_statementV2",
+        this.queryInfo
+      );
+      // console.log(res);
+      this.tableData = [];
       if (res.status !== 200) {
         this.total = 0;
         this.loading = false;
@@ -182,8 +182,8 @@ export default {
       this.tableData = res.data.records;
        this.total = parseInt(res.data.total);
       this.loading = false;
-      },
-      downLoad() {
+    },
+    downLoad() {
       this.getPdf(this.title); //参数是下载的pdf文件名
     },
     fullScreen(){
@@ -198,10 +198,10 @@ export default {
         document.exitFullscreen();
     }
     }
-    },
-    created(){
-      this.getBorrowStatement();
-    }
+  },
+  created() {
+    this.getBorrowStatement();
+  },
 };
 </script>
 

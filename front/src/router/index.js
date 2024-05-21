@@ -63,12 +63,28 @@ const routes = [
         component: () => import("@/components/BookManage/BorrowBook.vue"),
       },
       {
+        path: "/bookmanage2",
+        component: () => import("@/components/BookManage/BookManage.vue"),
+      },
+      {
+        path: "/booktype2",
+        component: () => import("@/components/BookManage/BookType.vue"),
+      },
+      {
+        path: "/statementrulemanage2",
+        component: () => import("@/components/BookManage/StatementRuleManage.vue"),
+      },
+      {
         path: "/returnbook",
         component: () => import("@/components/BookManage/ReturnBook.vue"),
       },
       {
         path: "/borrowstatement",
         component: () => import("@/components/BookManage/BorrowStatement.vue"),
+      },
+      {
+        path: "/borrowstatement2",
+        component: () => import("@/components/BookManage/BorrowStatement2.vue"),
       },
       {
         path: "/returnstatement",
@@ -108,6 +124,10 @@ const routes = [
       {
         path: "/statementsearch",
         component: () => import("@/components/Admin/StatementSearch.vue"),
+      },
+      {
+        path: "/statementsearchV2",
+        component: () => import("@/components/Admin/StatementSearchV2.vue"),
       },
       {
         path: "/statementrulemanage",

@@ -3,11 +3,15 @@ package com.book.backend.pojo;
 import com.baomidou.mybatisplus.annotation.*;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
+import org.apache.poi.hpsf.Decimal;
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
@@ -60,6 +64,11 @@ public class Violation implements Serializable {
     private String violationMessage;
 
     /**
+     * 违章金额
+     */
+    private double violationAmt;
+
+    /**
      * 违章信息管理员的id
      */
     private Integer violationAdminId;
@@ -78,4 +87,13 @@ public class Violation implements Serializable {
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
+
+    public static boolean isViolation(Violation violation){
+        //逾期
+        if (violation.getReturnDate().isAfter(violation.getCloseDate())){
+            return true;
+        }
+        //有违章信息
+        return !"".equals(violation.getViolationMessage());
+    }
 }

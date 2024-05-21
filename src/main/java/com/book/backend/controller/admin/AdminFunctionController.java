@@ -314,7 +314,11 @@ public class AdminFunctionController {
     public R<String> addBookAdmin(@RequestBody BookAdmins bookAdmins) {
         return bookAdminsService.addBookAdmin(bookAdmins);
     }
-
+    @GetMapping("payment/{userId}")
+    @ApiOperation("钱包充值")
+    public R<String> updateAmt(@PathVariable("userId") Long userId) {
+        return usersService.updateAmt(userId);
+    }
     /**
      * 获取图书管理员信息 通过图书管理员id
      *

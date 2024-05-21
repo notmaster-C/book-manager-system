@@ -5,7 +5,7 @@
       <div>
         <!-- <img src="../assets/heima.png" alt="" /> -->
         <span>欢迎登录图书管理系统</span>
-        <span style="color: #ccc; font-size: 16px">图书馆管理人员页面</span>
+        <span style="color: #ccc; font-size: 16px">图书管理人员页面</span>
       </div>
       <div>
         <!-- <a href="https://github.com/luoye6/Vue_BookManageSystem" title="GitHub源码地址" target="_blank"
@@ -61,11 +61,18 @@
             <span slot="title">归还图书</span>
           </el-menu-item>
           <el-menu-item
+            index="borrowstatement2"
+            @click="saveNavState('borrowstatement2')"
+          >
+            <i class="el-icon-folder-checked"></i>
+            <span slot="title">借阅报表</span>
+          </el-menu-item>
+          <el-menu-item
             index="borrowstatement"
             @click="saveNavState('borrowstatement')"
           >
             <i class="el-icon-folder-checked"></i>
-            <span slot="title">借书报表</span>
+            <span slot="title">违章报表</span>
           </el-menu-item>
           <el-menu-item
             index="returnstatement"
@@ -73,6 +80,27 @@
           >
             <i class="el-icon-folder-checked"></i>
             <span slot="title">还书报表</span>
+          </el-menu-item>
+          <el-menu-item
+              index="bookmanage2"
+              @click="saveNavState('bookmanage2')"
+          >
+            <i class="el-icon-notebook-1"></i>
+            <span slot="title">书籍管理</span>
+          </el-menu-item>
+          <el-menu-item
+              index="booktype2"
+              @click="saveNavState('booktype2')"
+          >
+            <i class="el-icon-notebook-2"></i>
+            <span slot="title">书籍类型管理</span>
+          </el-menu-item>
+          <el-menu-item
+              index="statementrulemanage2"
+              @click="saveNavState('statementrulemanage2')"
+          >
+            <i class="el-icon-key"></i>
+            <span slot="title">借阅证管理</span>
           </el-menu-item>
           <el-menu-item
             index="noticemanage"

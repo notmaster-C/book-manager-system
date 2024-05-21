@@ -254,6 +254,10 @@ export default {
           label: "借阅规则",
         },
         {
+          value: "account_amt",
+          label: "账户余额",
+        },
+        {
           value: "status",
           label: "状态",
         },
@@ -311,7 +315,7 @@ export default {
     //监听修改对话框的关闭，一旦对话框关闭，就重置表单，回显数据
     editDialogClosed() {
       this.$refs.editFormRef.resetFields();
-      this.editForm.checkList = ["南图", "北图", "教师之家"];
+      this.editForm.checkList = ["图书馆1", "图书馆2", "教师之家"];
     },
     //删除公告
     async removeUserById(id) {
