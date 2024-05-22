@@ -27,4 +27,8 @@ public class BasePage {
      * 借阅证编号
      */
     private String cardNumber;
+    /**
+     * 图书编号
+     */
+    private String bookNumber;
 }

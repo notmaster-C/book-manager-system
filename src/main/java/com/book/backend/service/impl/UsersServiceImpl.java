@@ -186,6 +186,11 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         BigDecimal  accountAmt = user.getAccountAmt();
         //加负数就可以扣款
         BigDecimal  accountAmt1 = accountAmt.add(violationAmt);
+
+        //小于0扣款失败
+        if (accountAmt1.compareTo(BigDecimal.ZERO) < 0) {
+            return R.error("余额不足,请充值!");
+        }
         user.setAccountAmt(accountAmt1);
         boolean update = this.update(user, userWrapper);
         if (!update) {

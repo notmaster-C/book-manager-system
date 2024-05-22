@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.book.backend.common.BasePage;
 import com.book.backend.common.R;
 import com.book.backend.pojo.*;
+import com.book.backend.pojo.dto.BooksBorrowDTO;
 import com.book.backend.pojo.dto.CommentDTO;
 import com.book.backend.pojo.dto.ViolationDTO;
 import com.book.backend.service.*;
@@ -31,7 +32,8 @@ public class UserFunctionController {
     private BooksBorrowService booksBorrowService;
     @Resource
     private ViolationService violationService;
-
+    @Resource
+    private BooksReverseService booksReverseService;
     @Resource
     private CommentService commentService;
     @Resource
@@ -171,5 +173,17 @@ public class UserFunctionController {
     @ApiOperation("获取该用户和AI聊天的最近的五条消息")
     public R<List<AiIntelligent>> getAiInformationByUserId(@PathVariable("userId") Long userId){
         return aiIntelligentService.getAiInformationByUserId(userId);
+    }
+
+
+    /**
+     * 借阅图书根据借阅证号和图书编号
+     *
+     * @return R
+     */
+    @PostMapping("reverse_book")
+    @ApiOperation("根据借阅证号和图书编号借阅图书")
+    public R<String> reverseBook(@RequestBody BooksReverse booksReverse) {
+        return booksReverseService.reverseBook(booksReverse);
     }
 }

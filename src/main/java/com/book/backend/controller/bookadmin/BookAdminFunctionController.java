@@ -40,6 +40,8 @@ public class BookAdminFunctionController {
     private BookTypeService bookTypeService;
     @Resource
     private BookRuleService bookRuleService;
+    @Resource
+    private BooksReverseService booksReverseService;
     /**
      * 借阅图书根据借阅证号和图书编号
      *
@@ -50,7 +52,26 @@ public class BookAdminFunctionController {
     public R<String> borrowBookByCardNumberAndBookNumber(@RequestBody BooksBorrowDTO booksBorrowDTO) {
         return booksService.borrowBookByCardNumberAndBookNumber(booksBorrowDTO);
     }
-
+    /**
+     * 借阅已预约图书根据借阅证号和图书编号
+     *
+     * @return R
+     */
+    @PostMapping("reverse_book")
+    @ApiOperation("根据借阅证号和图书编号借阅图书")
+    public R<String> borrowBookByReverse(@RequestBody BooksBorrowDTO booksBorrowDTO) {
+        return booksReverseService.borrowBookByReverse(booksBorrowDTO);
+    }
+    /**
+     * 预约列表
+     *
+     * @return R
+     */
+    @PostMapping("reverse_list")
+    @ApiOperation("根据借阅证号和图书编号查看预约列表图书")
+    public R<Page<BooksReverse>> reverseList(@RequestBody BasePage basePage) {
+        return booksReverseService.getBookReversePage(basePage);
+    }
     /**
      * 查看图书是否有逾期(查看是否借出)
      *
@@ -122,8 +143,8 @@ public class BookAdminFunctionController {
      */
     @PostMapping("get_borrow_statementV2")
     @ApiOperation("获取借书报表")
-    public R<Page<ViolationDTO>> getBorrowStatementV2(@RequestBody BasePage basePage) {
-        return bookAdminsService.getBorrowStatement(basePage);
+    public R<Page<BooksBorrow>> getBorrowStatementV2(@RequestBody BasePage basePage) {
+        return bookAdminsService.getBorrowStatementV2(basePage);
     }
     /**
      * 获取公告列表

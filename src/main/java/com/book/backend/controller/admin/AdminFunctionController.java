@@ -41,7 +41,8 @@ public class AdminFunctionController {
     private AdminsService adminsService;
     @Resource
     private ChartService chartService;
-
+    @Resource
+    private BooksReverseService booksReverseService;
     /**
      * 获取图书列表
      *
@@ -52,6 +53,16 @@ public class AdminFunctionController {
     @ApiOperation("获取图书列表")
     public R<Page<Books>> getBookList(@RequestBody BasePage basePage) {
         return booksService.getBookList(basePage);
+    }
+    /**
+     * 借阅已预约图书根据借阅证号和图书编号
+     *
+     * @return R
+     */
+    @PostMapping("reverse_book")
+    @ApiOperation("根据借阅证号和图书编号借阅图书")
+    public R<String> borrowBookByReverse(@RequestBody BooksBorrowDTO booksBorrowDTO) {
+        return booksReverseService.borrowBookByReverse(booksBorrowDTO);
     }
 
     /**
