@@ -82,6 +82,8 @@
         <el-table-column prop="returnDate" label="归还日期" sortable> </el-table-column>
         <el-table-column prop="violationMessage" label="违章信息">
         </el-table-column>
+         <el-table-column prop="violationAmt" label="扣款金额">
+        </el-table-column>
         <el-table-column prop="violationAdmin" label="处理人">
         </el-table-column>
       </el-table>
@@ -125,6 +127,10 @@ export default {
           value: "violation_message",
           label: "违章信息",
         },
+               {
+          value: "violation_amt",
+          label: "扣款信息",
+        },
       ],
       tableData: [
         {
@@ -153,6 +159,7 @@ export default {
         截止日期: "closeDate",
         归还日期: "returnDate",
         违章信息:"violationMessage",
+        扣款金额:"violationAmt",
         处理人:"violationAdmin"
       },
       loading:true

@@ -13,8 +13,10 @@ module.exports = defineConfig({
   transpileDependencies: true,
   lintOnSave: false,
   devServer: {
-    host: '0.0.0.0',
+    // host: '0.0.0.0',
+    host: 'localhost',
     port: 8081,
+    open:true,
     client: {
       webSocketURL: 'ws://0.0.0.0/ws',
     },

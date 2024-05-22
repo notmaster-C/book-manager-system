@@ -73,8 +73,8 @@
         element-loading-text="拼命加载中"
         element-loading-spinner="el-icon-loading"
         element-loading-background="rgba(0, 0, 0, 0.8)">
-        <el-table-column prop="violationId" label="ID" sortable>
-        </el-table-column>
+        <!-- <el-table-column prop="violationId" label="ID" sortable>
+        </el-table-column> -->
         <el-table-column prop="cardNumber" label="借阅证号" sortable>
         </el-table-column>
         <el-table-column prop="bookNumber" label="书籍ID" sortable> </el-table-column>
