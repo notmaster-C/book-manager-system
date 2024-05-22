@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.book.backend.common.BasePage;
 import com.book.backend.common.R;
+import com.book.backend.pojo.BooksBorrow;
 import com.book.backend.pojo.BooksReverse;
 import com.book.backend.pojo.dto.BooksBorrowDTO;
 
@@ -33,9 +34,9 @@ public interface BooksReverseService extends IService<BooksReverse> {
      *
      * @return R
      */
-    R<String> reverseBook(BooksReverse booksReverse);
+    R<String> reverseBook(BooksBorrowDTO booksBorrow);
 
-    R<String> borrowBookByReverse(BooksBorrowDTO booksBorrowDTO);
+    R<String> borrowBookByReverse(Long id);
 
-
+    R<String> delReverse(Long id);
 }

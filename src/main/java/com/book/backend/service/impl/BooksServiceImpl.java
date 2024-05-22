@@ -162,15 +162,16 @@ public class BooksServiceImpl extends ServiceImpl<BooksMapper, Books>
         if (!update) {
             return R.error("借阅图书失败");
         }
-        Violation violation = new Violation();
-        BeanUtils.copyProperties(booksBorrow1, violation, "borrowId");
-        violation.setViolationId(null);
-        violation.setViolationMessage("");
-        violation.setViolationAdminId(booksBorrowDTO.getBookAdminId());
-        boolean save = violationService.save(violation);
-        if (!save) {
-            return R.error("借阅图书失败");
-        }
+//        不需要插入到违章记录里的处理
+//        Violation violation = new Violation();
+//        BeanUtils.copyProperties(booksBorrow1, violation, "borrowId");
+//        violation.setViolationId(null);
+//        violation.setViolationMessage("");
+//        violation.setViolationAdminId(booksBorrowDTO.getBookAdminId());
+//        boolean save = violationService.save(violation);
+//        if (!save) {
+//            return R.error("借阅图书失败");
+//        }
         return R.success(null, "借阅图书成功");
     }
 

@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.Resource;
 import java.math.BigDecimal;
@@ -75,16 +76,16 @@ public class BooksReverseServiceImpl extends ServiceImpl<BooksReverseMapper, Boo
         QueryWrapper<BooksReverse> queryWrapper = new QueryWrapper<>();
         // 创建分页构造器
         Page<BooksReverse> pageInfo = new Page<>(pageNum, pageSize);
-        if (!"".equals(cardNumber)){
+        if (!("".equals(cardNumber)||cardNumber == null)){
             queryWrapper.eq("card_number", cardNumber);
         }
-        if (!"".equals(bookNumber) ){
+        if (!("".equals(bookNumber)||bookNumber == null)){
             queryWrapper.eq("book_number", bookNumber);
         }
         if (!StringUtils.isBlank(condition) && !StringUtils.isBlank(query)) {
             queryWrapper.like(condition, query);
         }
-        queryWrapper.orderByAsc("create_time");
+        queryWrapper.orderByDesc("create_time");
         Page<BooksReverse> page = this.page(pageInfo, queryWrapper);
         result.setData(page);
         result.setStatus(200);
@@ -141,14 +142,16 @@ public class BooksReverseServiceImpl extends ServiceImpl<BooksReverseMapper, Boo
      */
     @Transactional
     @Override
-    public R<String> reverseBook(BooksReverse booksReverse) {
-        LocalDateTime reverseDate = booksReverse.getReverseDate();
-        if (reverseDate == null) {
-            return R.error("预约日期不能为空");
+    public R<String> reverseBook(BooksBorrowDTO booksBorrow) {
+        LocalDateTime reverseDate = booksBorrow.getBorrowDate();
+        if (reverseDate==null||LocalDateTime.now().isAfter(reverseDate)){
+            return R.error("预约时间异常");
         }
-        Long cardNumber = booksReverse.getCardNumber();
-        Long bookNumber = booksReverse.getBookNumber();
-
+        Long cardNumber = booksBorrow.getCardNumber();
+        Long bookNumber = booksBorrow.getBookNumber();
+        if (cardNumber <=0 || bookNumber <=0){
+            return R.error("图书编号或者借阅证错误");
+        }
         LambdaQueryWrapper<BooksReverse> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(BooksReverse::getBookNumber,bookNumber).isNull(BooksReverse::getCloseDate);
         BooksReverse one = this.getOne(queryWrapper);
@@ -167,7 +170,10 @@ public class BooksReverseServiceImpl extends ServiceImpl<BooksReverseMapper, Boo
         if ((book == null) || (book.getBookStatus().equals(Constant.BOOKDISABLE))) {
             return R.error("预约图书失败,图书不存在");
         }
-
+        BooksReverse booksReverse =new BooksReverse();
+        booksReverse.setReverseDate(reverseDate);
+        booksReverse.setBookNumber(bookNumber);
+        booksReverse.setCardNumber(cardNumber);
         boolean save =  this.save(booksReverse);
         if (!save) {
             return R.error("预约图书失败");
@@ -177,32 +183,44 @@ public class BooksReverseServiceImpl extends ServiceImpl<BooksReverseMapper, Boo
 
     @Override
     @Transactional
-    public R<String> borrowBookByReverse(BooksBorrowDTO booksBorrowDTO) {
+    public R<String> borrowBookByReverse(Long id) {
+        BooksReverse booksReverse = this.getOne(new LambdaQueryWrapper<BooksReverse>().eq(BooksReverse::getId, id));
+        if(booksReverse==null || booksReverse.getCloseDate()!=null){
+            return R.error("借阅图书失败");
+        }
+        BooksBorrowDTO booksBorrowDTO =new BooksBorrowDTO();
         // 图书编号
-        Long bookNumber = booksBorrowDTO.getBookNumber();
+        Long bookNumber = booksReverse.getBookNumber();
         // 借阅证号
-        Long cardNumber = booksBorrowDTO.getCardNumber();
+        Long cardNumber = booksReverse.getCardNumber();
         // 当前时间
         LocalDateTime borrowDate = LocalDateTime.now();
         booksBorrowDTO.setBorrowDate(borrowDate);
-
+        booksBorrowDTO.setBookNumber(bookNumber);
+        booksBorrowDTO.setCardNumber(cardNumber);
+        //处理借阅逻辑,如果能够借阅成功 说明 没问题,修改预约的时间即可
         R<String> s = booksService.borrowBookByCardNumberAndBookNumber(booksBorrowDTO);
         if (!s.getStatus().equals(200)){
             return s;
         }
-        LambdaQueryWrapper<BooksReverse> queryWrapper = new LambdaQueryWrapper<>();
-        queryWrapper.eq(BooksReverse::getCardNumber,cardNumber).
-                eq(BooksReverse::getBookNumber,bookNumber).isNull(BooksReverse::getCloseDate);
-        BooksReverse one = this.getOne(queryWrapper);
-        if (one == null){
-            return R.error("借阅图书失败,该图书未预约");
-        }
-        one.setCloseDate(borrowDate);
-        boolean save = this.save(one);
+        booksReverse.setCloseDate(borrowDate);
+        boolean save = this.saveOrUpdate(booksReverse);
         if (!save) {
             return R.error("借阅图书失败");
         }
         return R.success(null, "借阅图书成功");
+    }
+
+    @Override
+    public R<String> delReverse(Long id) {
+        if (id ==null || id <=0){
+            return R.error("删除失败");
+        }
+        boolean flag = this.removeById(id);
+        if (!flag){
+            return R.error("删除失败");
+        }
+        return R.success(null, "删除预约记录成功");
     }
 }
 

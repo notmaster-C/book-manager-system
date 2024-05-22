@@ -57,10 +57,15 @@ public class BookAdminFunctionController {
      *
      * @return R
      */
-    @PostMapping("reverse_book")
+    @GetMapping("reverse_book/{id}")
     @ApiOperation("根据借阅证号和图书编号借阅图书")
-    public R<String> borrowBookByReverse(@RequestBody BooksBorrowDTO booksBorrowDTO) {
-        return booksReverseService.borrowBookByReverse(booksBorrowDTO);
+    public R<String> borrowBookByReverse(@PathVariable("id") Long id) {
+        return booksReverseService.borrowBookByReverse(id);
+    }
+    @GetMapping("del_reverse/{id}")
+    @ApiOperation("删除预约记录")
+    public R<String> delReverse(@PathVariable("id") Long id) {
+        return booksReverseService.delReverse(id);
     }
     /**
      * 预约列表

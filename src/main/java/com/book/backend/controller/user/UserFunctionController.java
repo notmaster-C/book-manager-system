@@ -183,7 +183,7 @@ public class UserFunctionController {
      */
     @PostMapping("reverse_book")
     @ApiOperation("根据借阅证号和图书编号借阅图书")
-    public R<String> reverseBook(@RequestBody BooksReverse booksReverse) {
-        return booksReverseService.reverseBook(booksReverse);
+    public R<String> reverseBook(@RequestBody BooksBorrowDTO booksBorrow) {
+        return booksReverseService.reverseBook(booksBorrow);
     }
 }

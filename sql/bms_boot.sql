@@ -3,15 +3,15 @@
 
  Source Server         : localhost
  Source Server Type    : MySQL
- Source Server Version : 50719 (5.7.19)
+ Source Server Version : 80033 (8.0.33)
  Source Host           : localhost:3306
  Source Schema         : bms_boot
 
  Target Server Type    : MySQL
- Target Server Version : 50719 (5.7.19)
+ Target Server Version : 80033 (8.0.33)
  File Encoding         : 65001
 
- Date: 22/05/2024 21:48:34
+ Date: 23/05/2024 00:18:47
 */
 
 SET NAMES utf8mb4;
@@ -22,15 +22,15 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `t_admins`;
 CREATE TABLE `t_admins`  (
-  `admin_id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '管理员表的唯一标识',
-  `username` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
-  `password` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码(MD5加密)',
-  `admin_name` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '管理员真实姓名',
-  `status` int(1) NOT NULL COMMENT '1表示可用 0表示禁用',
+  `admin_id` bigint NOT NULL AUTO_INCREMENT COMMENT '管理员表的唯一标识',
+  `username` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户名',
+  `password` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '密码(MD5加密)',
+  `admin_name` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '管理员真实姓名',
+  `status` int NOT NULL COMMENT '1表示可用 0表示禁用',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`admin_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1624 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1624 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_admins
@@ -42,14 +42,14 @@ INSERT INTO `t_admins` VALUES (1623, 'root', 'da4c189f916ae0b5aeb59389df4f0df0',
 -- ----------------------------
 DROP TABLE IF EXISTS `t_ai_intelligent`;
 CREATE TABLE `t_ai_intelligent`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `input_message` text CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户输入信息',
-  `ai_result` text CHARACTER SET utf8 COLLATE utf8_general_ci NULL COMMENT 'AI生成结果',
-  `user_id` bigint(20) NULL DEFAULT NULL,
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `input_message` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户输入信息',
+  `ai_result` text CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL COMMENT 'AI生成结果',
+  `user_id` bigint NULL DEFAULT NULL,
   `create_time` datetime NULL DEFAULT NULL,
   `update_time` datetime NULL DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1785219432083558402 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1785219432083558402 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_ai_intelligent
@@ -88,16 +88,16 @@ INSERT INTO `t_ai_intelligent` VALUES (1785219432083558401, '随便给我推荐�
 -- ----------------------------
 DROP TABLE IF EXISTS `t_book_admins`;
 CREATE TABLE `t_book_admins`  (
-  `book_admin_id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '图书管理员表的唯一标识',
-  `username` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
-  `password` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码md5加密',
-  `book_admin_name` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书管理员真实姓名',
-  `status` int(1) NOT NULL COMMENT '1表示可用 0表示禁用',
-  `email` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '电子邮箱',
+  `book_admin_id` bigint NOT NULL AUTO_INCREMENT COMMENT '图书管理员表的唯一标识',
+  `username` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户名',
+  `password` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '密码md5加密',
+  `book_admin_name` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书管理员真实姓名',
+  `status` int NOT NULL COMMENT '1表示可用 0表示禁用',
+  `email` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '电子邮箱',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`book_admin_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 1547 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 1547 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_book_admins
@@ -112,16 +112,16 @@ INSERT INTO `t_book_admins` VALUES (1546, 'maomao', 'da4c189f916ae0b5aeb59389df4
 -- ----------------------------
 DROP TABLE IF EXISTS `t_book_rule`;
 CREATE TABLE `t_book_rule`  (
-  `rule_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '借阅规则记录的唯一标识',
-  `book_rule_id` int(11) NOT NULL COMMENT '借阅规则编号',
-  `book_days` int(11) NOT NULL COMMENT '借阅天数',
-  `book_limit_number` int(11) NOT NULL COMMENT '限制借阅的本数',
-  `book_limit_library` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '限制的图书馆',
+  `rule_id` int NOT NULL AUTO_INCREMENT COMMENT '借阅规则记录的唯一标识',
+  `book_rule_id` int NOT NULL COMMENT '借阅规则编号',
+  `book_days` int NOT NULL COMMENT '借阅天数',
+  `book_limit_number` int NOT NULL COMMENT '限制借阅的本数',
+  `book_limit_library` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '限制的图书馆',
   `book_overdue_fee` double NOT NULL COMMENT '图书借阅后每天逾期费用',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`rule_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_book_rule
@@ -138,13 +138,13 @@ INSERT INTO `t_book_rule` VALUES (6, 323, 1, 1, '南图,北图,教师之家', 1,
 -- ----------------------------
 DROP TABLE IF EXISTS `t_book_type`;
 CREATE TABLE `t_book_type`  (
-  `type_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '图书类别唯一标识',
-  `type_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '借阅类别的昵称',
-  `type_content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '借阅类别的描述',
+  `type_id` int NOT NULL AUTO_INCREMENT COMMENT '图书类别唯一标识',
+  `type_name` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '借阅类别的昵称',
+  `type_content` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '借阅类别的描述',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`type_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 7 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_book_type
@@ -161,26 +161,26 @@ INSERT INTO `t_book_type` VALUES (6, '计算机', '从入门到入x的道路', '
 -- ----------------------------
 DROP TABLE IF EXISTS `t_books`;
 CREATE TABLE `t_books`  (
-  `book_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '图书表唯一标识',
-  `book_number` bigint(11) NOT NULL COMMENT '图书编号 图书的唯一标识',
-  `book_name` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书名称',
-  `book_author` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书作者',
-  `book_library` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书所在图书馆名称',
-  `book_type` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书类别',
-  `book_location` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书位置',
-  `book_status` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书状态',
-  `book_description` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '图书描述',
+  `book_id` int NOT NULL AUTO_INCREMENT COMMENT '图书表唯一标识',
+  `book_number` bigint NOT NULL COMMENT '图书编号 图书的唯一标识',
+  `book_name` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书名称',
+  `book_author` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书作者',
+  `book_library` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书所在图书馆名称',
+  `book_type` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书类别',
+  `book_location` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书位置',
+  `book_status` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书状态',
+  `book_description` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '图书描述',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`book_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 122 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 122 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_books
 -- ----------------------------
-INSERT INTO `t_books` VALUES (1, 1234, '红楼梦', '曹雪芹', '南图', '小说', 'E1', '未借出', '《红楼梦》，原名《石头记》，中国古代章回体长篇小说，中国古典四大名著之一。', '2023-02-04 17:51:04', '2023-02-04 17:51:04');
+INSERT INTO `t_books` VALUES (1, 1234, '红楼梦', '曹雪芹', '南图', '小说', 'E1', '已借出', '《红楼梦》，原名《石头记》，中国古代章回体长篇小说，中国古典四大名著之一。', '2023-02-04 17:51:04', '2024-05-23 00:07:46');
 INSERT INTO `t_books` VALUES (2, 1235, '百年孤独', '加西亚·马尔克斯', '北图', '小说', 'E2', '未借出', '《百年孤独》，是哥伦比亚作家加西亚·马尔克斯创作的长篇小说，是其代表作，也是拉丁美洲魔幻现实主义文学的代表作，被誉为“再现拉丁美洲历史社会图景的鸿篇巨著”。', '2023-02-04 17:53:27', '2023-02-04 17:53:27');
-INSERT INTO `t_books` VALUES (3, 1236, '三体', '刘慈欣', '教师之家', '小说', 'F8', '未借出', '科幻小说，全名《地球往事三部曲》，是刘慈欣编写的史诗级巨作，是一部典型的硬科幻作品。', '2023-02-04 17:53:27', '2023-02-04 17:53:27');
+INSERT INTO `t_books` VALUES (3, 1236, '三体', '刘慈欣', '教师之家', '小说', 'F8', '已借出', '科幻小说，全名《地球往事三部曲》，是刘慈欣编写的史诗级巨作，是一部典型的硬科幻作品。', '2023-02-04 17:53:27', '2023-02-04 17:53:27');
 INSERT INTO `t_books` VALUES (4, 1237, '战争与和平', '列夫·尼古拉耶维奇·托尔斯泰', '南图', '小说', 'A3', '未借出', '该作以1812年的卫国战争为中心，反映从1805到1820年间的重大历史事件。以鲍尔康斯、别祖霍夫、罗斯托夫和库拉金四大贵族的经历为主线，在战争与和平的交替描写中把众多的事件和人物串联起来', '2023-02-10 17:00:48', '2023-02-10 17:00:48');
 INSERT INTO `t_books` VALUES (5, 1238, '巴黎圣母院', '雨果', '北图', '小说', 'B1', '未借出', '本书以1482年的法国为背景，塑造了一个个栩栩如生的形象——天真纯洁的吉普赛姑娘爱丝美拉达、年轻英俊...', '2023-02-10 17:03:32', '2023-02-10 17:03:32');
 INSERT INTO `t_books` VALUES (7, 50970375442, '时间简史', '斯蒂芬·威廉·霍金', '教师之家', '小说', 'E66', '未借出', '讲述了关于宇宙本性的最前沿知识，包括：我们的宇宙图像、空间和时间、膨胀的宇宙、不确定性原理、黑洞、宇宙的起源和命运等内容，深入浅出地介绍了遥远星系、...', '2023-02-11 21:55:40', '2023-02-11 21:55:40');
@@ -226,16 +226,16 @@ INSERT INTO `t_books` VALUES (121, 44361372783, '红高粱家族123', '莫言', 
 -- ----------------------------
 DROP TABLE IF EXISTS `t_books_borrow`;
 CREATE TABLE `t_books_borrow`  (
-  `borrow_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '借阅表唯一标识',
-  `card_number` bigint(11) NOT NULL COMMENT '借阅证编号 固定11位随机生成 用户和图书关联的唯一标识',
-  `book_number` bigint(11) NOT NULL COMMENT '图书编号 图书唯一标识',
+  `borrow_id` int NOT NULL AUTO_INCREMENT COMMENT '借阅表唯一标识',
+  `card_number` bigint NOT NULL COMMENT '借阅证编号 固定11位随机生成 用户和图书关联的唯一标识',
+  `book_number` bigint NOT NULL COMMENT '图书编号 图书唯一标识',
   `borrow_date` datetime NOT NULL COMMENT '借阅日期',
   `close_date` datetime NOT NULL COMMENT '截止日期',
   `return_date` datetime NULL DEFAULT NULL COMMENT '归还日期',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`borrow_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_books_borrow
@@ -256,26 +256,27 @@ INSERT INTO `t_books_borrow` VALUES (30, 18012345678, 1234, '2023-04-13 15:12:39
 INSERT INTO `t_books_borrow` VALUES (42, 18012345678, 1236, '2023-05-10 20:13:30', '2023-06-29 20:13:30', '2023-05-10 20:13:40', '2023-05-10 20:13:31', '2023-05-10 20:13:31');
 INSERT INTO `t_books_borrow` VALUES (43, 18012345678, 1234, '2023-05-10 20:18:24', '2023-06-29 20:18:24', '2024-05-22 18:41:05', '2023-05-10 20:18:24', '2023-05-10 20:18:24');
 INSERT INTO `t_books_borrow` VALUES (44, 18012345678, 9378134736, '2023-05-20 10:09:02', '2023-07-09 10:09:02', '2023-05-20 10:16:59', '2023-05-20 10:09:03', '2023-05-20 10:09:03');
+INSERT INTO `t_books_borrow` VALUES (49, 18012345678, 1236, '2024-05-23 00:08:40', '2024-07-12 00:08:40', NULL, '2024-05-23 00:08:39', '2024-05-23 00:08:39');
+INSERT INTO `t_books_borrow` VALUES (50, 18012345678, 1234, '2024-05-23 00:17:32', '2024-07-12 00:17:32', NULL, '2024-05-23 00:17:32', '2024-05-23 00:17:32');
 
 -- ----------------------------
 -- Table structure for t_books_reverse
 -- ----------------------------
 DROP TABLE IF EXISTS `t_books_reverse`;
 CREATE TABLE `t_books_reverse`  (
-  `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
-  `card_number` bigint(11) NOT NULL COMMENT '借阅证编号 固定11位随机生成 用户和图书关联的唯一标识',
-  `book_number` bigint(11) NOT NULL COMMENT '图书编号 图书唯一标识',
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '唯一标识',
+  `card_number` bigint NOT NULL COMMENT '借阅证编号 固定11位随机生成 用户和图书关联的唯一标识',
+  `book_number` bigint NOT NULL COMMENT '图书编号 图书唯一标识',
   `reverse_date` datetime NOT NULL COMMENT '预约日期',
   `close_date` datetime NULL DEFAULT NULL COMMENT '关闭日期',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 45 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 48 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_books_reverse
 -- ----------------------------
-INSERT INTO `t_books_reverse` VALUES (1, 18012345678, 1234, '2023-02-05 18:48:19', '2023-03-27 18:48:19', '2023-02-05 18:48:19', '2023-02-05 18:48:19');
 INSERT INTO `t_books_reverse` VALUES (2, 18012345678, 1235, '2023-02-05 18:48:51', '2023-03-27 18:48:51', '2023-02-05 18:48:51', '2023-02-05 18:48:51');
 INSERT INTO `t_books_reverse` VALUES (3, 18012345678, 1236, '2023-02-05 18:48:51', '2023-03-27 18:48:51', '2023-02-05 18:48:51', '2023-02-05 18:48:51');
 INSERT INTO `t_books_reverse` VALUES (11, 18012345678, 1234, '2023-02-08 19:06:05', '2023-03-30 19:06:05', '2023-02-08 19:06:05', '2023-02-08 19:06:05');
@@ -289,15 +290,15 @@ INSERT INTO `t_books_reverse` VALUES (18, 18012345678, 1234, '2023-02-12 19:59:2
 INSERT INTO `t_books_reverse` VALUES (19, 18012345678, 1234, '2023-02-12 20:09:55', '2023-04-03 20:09:55', '2023-02-12 20:09:56', '2023-02-12 20:09:56');
 INSERT INTO `t_books_reverse` VALUES (30, 18012345678, 1234, '2023-04-13 15:12:39', '2023-06-02 15:12:39', '2023-04-13 15:12:42', '2023-04-13 15:12:42');
 INSERT INTO `t_books_reverse` VALUES (42, 18012345678, 1236, '2023-05-10 20:13:30', '2023-06-29 20:13:30', '2023-05-10 20:13:31', '2023-05-10 20:13:31');
-INSERT INTO `t_books_reverse` VALUES (43, 18012345678, 1234, '2023-05-10 20:18:24', '2023-06-29 20:18:24', '2023-05-10 20:18:24', '2023-05-10 20:18:24');
-INSERT INTO `t_books_reverse` VALUES (44, 18012345678, 9378134736, '2023-05-20 10:09:02', '2023-07-09 10:09:02', '2023-05-20 10:09:03', '2023-05-20 10:09:03');
+INSERT INTO `t_books_reverse` VALUES (43, 18012345678, 1234, '2023-05-10 20:18:24', NULL, '2023-05-10 20:18:24', '2024-05-23 00:18:39');
+INSERT INTO `t_books_reverse` VALUES (47, 18012345678, 1234, '2024-05-31 23:34:30', '2024-05-23 00:17:32', '2024-05-22 23:35:11', '2024-05-23 00:05:16');
 
 -- ----------------------------
 -- Table structure for t_chart
 -- ----------------------------
 DROP TABLE IF EXISTS `t_chart`;
 CREATE TABLE `t_chart`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT 'id',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT 'id',
   `name` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL DEFAULT NULL COMMENT '图标名称',
   `goal` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '分析目标',
   `chart_data` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '图标数据',
@@ -306,10 +307,10 @@ CREATE TABLE `t_chart`  (
   `gen_result` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '生成的分析结论',
   `status` varchar(128) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'wait' COMMENT 'wait,running,succeed,failed',
   `exec_message` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NULL COMMENT '执行信息',
-  `admin_id` bigint(20) NULL DEFAULT NULL COMMENT '创建管理员 id',
+  `admin_id` bigint NULL DEFAULT NULL COMMENT '创建管理员 id',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `isDelete` tinyint(4) NOT NULL DEFAULT 0 COMMENT '是否删除',
+  `isDelete` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 1704377111015960579 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = '图表信息表' ROW_FORMAT = DYNAMIC;
 
@@ -374,18 +375,18 @@ INSERT INTO `t_chart` VALUES (1704377111015960578, '测试213', '我想要分析
 -- ----------------------------
 DROP TABLE IF EXISTS `t_chat`;
 CREATE TABLE `t_chat`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT COMMENT '聊天记录id\r\n',
-  `from_id` bigint(20) NOT NULL COMMENT '发送消息者id\r\n',
-  `to_id` bigint(20) NULL DEFAULT NULL COMMENT '接受消息者id,可以为空',
-  `text` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '消息内容',
-  `chat_type` tinyint(4) NOT NULL COMMENT '聊天类型 1-私聊 2-群聊',
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '聊天记录id\r\n',
+  `from_id` bigint NOT NULL COMMENT '发送消息者id\r\n',
+  `to_id` bigint NULL DEFAULT NULL COMMENT '接受消息者id,可以为空',
+  `text` varchar(512) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '消息内容',
+  `chat_type` tinyint NOT NULL COMMENT '聊天类型 1-私聊 2-群聊',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
-  `message_type` int(1) NOT NULL COMMENT '消息类型 1 文本 2 撤回消息 3 图片 4 语音 5 视频',
-  `role` int(11) NOT NULL COMMENT '消息发送者身份 1 用户 2 图书管理员',
-  `reply_message` varchar(512) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '回复的消息内容',
+  `message_type` int NOT NULL COMMENT '消息类型 1 文本 2 撤回消息 3 图片 4 语音 5 视频',
+  `role` int NOT NULL COMMENT '消息发送者身份 1 用户 2 图书管理员',
+  `reply_message` varchar(512) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '回复的消息内容',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 12 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_chat
@@ -396,15 +397,15 @@ CREATE TABLE `t_chat`  (
 -- ----------------------------
 DROP TABLE IF EXISTS `t_comment`;
 CREATE TABLE `t_comment`  (
-  `comment_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '留言表唯一标识',
-  `comment_avatar` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '留言的头像 链接',
-  `comment_barrage_style` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '弹幕的高度(样式)',
-  `comment_message` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '弹幕的内容',
-  `comment_time` int(11) NOT NULL COMMENT '留言的时间(控制速度)',
+  `comment_id` int NOT NULL AUTO_INCREMENT COMMENT '留言表唯一标识',
+  `comment_avatar` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '留言的头像 链接',
+  `comment_barrage_style` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '弹幕的高度(样式)',
+  `comment_message` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '弹幕的内容',
+  `comment_time` int NOT NULL COMMENT '留言的时间(控制速度)',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`comment_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 66 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = COMPACT;
+) ENGINE = InnoDB AUTO_INCREMENT = 66 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = COMPACT;
 
 -- ----------------------------
 -- Records of t_comment
@@ -446,14 +447,14 @@ INSERT INTO `t_comment` VALUES (65, 'https://img0.baidu.com/it/u=825023390,34299
 -- ----------------------------
 DROP TABLE IF EXISTS `t_notice`;
 CREATE TABLE `t_notice`  (
-  `notice_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '公告表唯一标识',
-  `notice_title` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告题目',
-  `notice_content` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '公告内容',
-  `notice_admin_id` int(11) NOT NULL COMMENT '发布公告的管理员id',
+  `notice_id` int NOT NULL AUTO_INCREMENT COMMENT '公告表唯一标识',
+  `notice_title` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '公告题目',
+  `notice_content` varchar(255) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '公告内容',
+  `notice_admin_id` int NOT NULL COMMENT '发布公告的管理员id',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`notice_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_notice
@@ -468,15 +469,15 @@ INSERT INTO `t_notice` VALUES (4, '个人博客地址分享Java学习', 'https:/
 -- ----------------------------
 DROP TABLE IF EXISTS `t_user_interface_info`;
 CREATE TABLE `t_user_interface_info`  (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `user_id` bigint(20) NOT NULL COMMENT '用户id或管理员id',
-  `interface_id` bigint(20) NOT NULL COMMENT '1 表示AI聊天接口 2表示智能分析接口 ',
-  `total_num` int(11) NOT NULL DEFAULT 0 COMMENT '总共调用接口次数\r\n',
-  `left_num` int(11) NOT NULL DEFAULT 0 COMMENT '剩余接口可用次数',
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `user_id` bigint NOT NULL COMMENT '用户id或管理员id',
+  `interface_id` bigint NOT NULL COMMENT '1 表示AI聊天接口 2表示智能分析接口 ',
+  `total_num` int NOT NULL DEFAULT 0 COMMENT '总共调用接口次数\r\n',
+  `left_num` int NOT NULL DEFAULT 0 COMMENT '剩余接口可用次数',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 3 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_user_interface_info
@@ -489,18 +490,18 @@ INSERT INTO `t_user_interface_info` VALUES (2, 1623, 2, 28, 9, '2023-09-03 19:58
 -- ----------------------------
 DROP TABLE IF EXISTS `t_users`;
 CREATE TABLE `t_users`  (
-  `user_id` bigint(11) NOT NULL AUTO_INCREMENT COMMENT '用户表的唯一标识',
-  `username` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '用户名',
-  `password` varchar(32) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '密码 MD5加密',
-  `card_name` varchar(10) CHARACTER SET utf8 COLLATE utf8_general_ci NOT NULL COMMENT '真实姓名',
-  `card_number` bigint(11) NOT NULL COMMENT '借阅证编号 固定11位随机生成 非空',
-  `rule_number` int(11) NOT NULL COMMENT '规则编号 可以自定义也就是权限功能',
+  `user_id` bigint NOT NULL AUTO_INCREMENT COMMENT '用户表的唯一标识',
+  `username` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '用户名',
+  `password` varchar(32) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '密码 MD5加密',
+  `card_name` varchar(10) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL COMMENT '真实姓名',
+  `card_number` bigint NOT NULL COMMENT '借阅证编号 固定11位随机生成 非空',
+  `rule_number` int NOT NULL COMMENT '规则编号 可以自定义也就是权限功能',
   `account_amt` decimal(5, 2) NOT NULL DEFAULT 0.00 COMMENT '账户余额',
-  `status` int(1) NOT NULL COMMENT '1表示可用 0表示禁用',
+  `status` int NOT NULL COMMENT '1表示可用 0表示禁用',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`user_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 2545 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 2545 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_users
@@ -514,19 +515,19 @@ INSERT INTO `t_users` VALUES (2544, '账号3', 'da4c189f916ae0b5aeb59389df4f0df0
 -- ----------------------------
 DROP TABLE IF EXISTS `t_violation`;
 CREATE TABLE `t_violation`  (
-  `violation_id` int(11) NOT NULL AUTO_INCREMENT COMMENT '违章表唯一标识',
-  `card_number` bigint(11) NOT NULL COMMENT '借阅证编号 11位 随机生成',
-  `book_number` bigint(11) NOT NULL COMMENT '图书编号 图书唯一标识',
+  `violation_id` int NOT NULL AUTO_INCREMENT COMMENT '违章表唯一标识',
+  `card_number` bigint NOT NULL COMMENT '借阅证编号 11位 随机生成',
+  `book_number` bigint NOT NULL COMMENT '图书编号 图书唯一标识',
   `borrow_date` datetime NOT NULL COMMENT '借阅日期',
   `close_date` datetime NOT NULL COMMENT '截止日期',
   `return_date` datetime NULL DEFAULT NULL COMMENT '归还日期',
   `violation_amt` decimal(5, 2) NOT NULL DEFAULT 0.00 COMMENT '账户余额',
-  `violation_message` varchar(100) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT '违章信息',
-  `violation_admin_id` int(11) NOT NULL COMMENT '违章信息管理员的id',
+  `violation_message` varchar(100) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NULL DEFAULT NULL COMMENT '违章信息',
+  `violation_admin_id` int NOT NULL COMMENT '违章信息管理员的id',
   `create_time` datetime NOT NULL COMMENT '创建时间',
   `update_time` datetime NOT NULL ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
   PRIMARY KEY (`violation_id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 33 CHARACTER SET = utf8mb3 COLLATE = utf8mb3_general_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_violation
@@ -545,7 +546,7 @@ INSERT INTO `t_violation` VALUES (11, 18012345678, 1234, '2023-02-12 19:59:23', 
 INSERT INTO `t_violation` VALUES (12, 18012345678, 1234, '2023-02-12 20:09:55', '2023-04-03 20:09:55', '2023-02-12 20:10:03', 0.00, '', 1543, '2023-02-12 20:09:56', '2023-02-12 20:09:56');
 INSERT INTO `t_violation` VALUES (28, 18012345678, 1236, '2023-05-10 20:02:33', '2023-06-29 20:02:33', '2023-05-10 20:02:40', 0.00, '', 1420, '2023-05-10 20:02:34', '2023-05-10 20:02:34');
 INSERT INTO `t_violation` VALUES (29, 18012345678, 1236, '2023-05-10 20:13:30', '2023-06-29 20:13:30', '2023-05-10 20:13:40', 0.00, '', 1420, '2023-05-10 20:13:31', '2023-05-10 20:13:31');
-INSERT INTO `t_violation` VALUES (30, 18012345678, 1234, '2023-05-10 20:18:24', '2023-06-29 20:18:24', NULL, 0.00, '', 1420, '2023-05-10 20:18:24', '2023-05-10 20:18:24');
+INSERT INTO `t_violation` VALUES (30, 18012345678, 1234, '2023-05-10 20:18:24', '2023-06-29 20:18:24', '2023-05-10 20:13:40', 0.00, '', 1420, '2023-05-10 20:18:24', '2024-05-23 00:06:28');
 INSERT INTO `t_violation` VALUES (31, 18012345678, 9378134736, '2023-05-20 10:09:02', '2023-07-09 10:09:02', '2023-05-20 10:16:59', 0.00, '', 1420, '2023-05-20 10:09:03', '2023-05-20 10:09:03');
 INSERT INTO `t_violation` VALUES (32, 18012345678, 1234, '2023-05-10 20:18:24', '2023-06-29 20:18:24', '2024-05-22 18:41:05', -490.50, '', 1420, '2024-05-22 18:41:08', '2024-05-22 18:41:08');
 

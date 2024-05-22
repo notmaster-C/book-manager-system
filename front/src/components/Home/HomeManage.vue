@@ -61,6 +61,13 @@
             <span slot="title">归还图书</span>
           </el-menu-item>
           <el-menu-item
+              index="bookReverse"
+              @click="saveNavState('bookReverse')"
+          >
+            <i class="el-icon-folder-checked"></i>
+            <span slot="title">预约管理</span>
+          </el-menu-item>
+          <el-menu-item
             index="borrowstatement2"
             @click="saveNavState('borrowstatement2')"
           >

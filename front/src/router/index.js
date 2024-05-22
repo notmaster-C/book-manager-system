@@ -75,6 +75,10 @@ const routes = [
         component: () => import("@/components/BookManage/StatementRuleManage.vue"),
       },
       {
+        path: "/bookReverse",
+        component: () => import("@/components/BookManage/ReverseBook.vue"),
+      },
+      {
         path: "/returnbook",
         component: () => import("@/components/BookManage/ReturnBook.vue"),
       },
