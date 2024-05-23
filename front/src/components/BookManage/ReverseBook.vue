@@ -98,7 +98,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
-            <el-tooltip effect="dark" content="借阅" placement="top" :enterable="false">
+            <el-tooltip v-if="scope.row.closeDate == null" effect="dark" content="借阅" placement="top" :enterable="false">
               <el-button type="primary" icon="el-icon-aim" size="mini"
                          @click="borrowReverseBook(scope.row.id)"></el-button>
             </el-tooltip>

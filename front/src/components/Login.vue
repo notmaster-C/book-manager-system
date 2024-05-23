@@ -4,27 +4,27 @@
     <div class="login_box">
       <!-- 头像区域 -->
       <div class="avatar_box">
-        <img src="../assets/images/dinosaur.jpg" alt="" />
+        <img src="../assets/images/dinosaur.jpg" alt=""/>
       </div>
       <!-- 登录表单区域 -->
       <el-form ref="loginFormRef" :model="loginForm" :rules="loginFormRules" label-width="0px" class="login_form">
-        <!-- 用户名 -->
-        <el-form-item prop="username">
-          <el-input v-model.trim="loginForm.username" prefix-icon="iconfont icon-gerenxinxi"></el-input>
-        </el-form-item>
-        <!-- 密码 -->
-        <el-form-item prop="password">
-          <el-input v-model="loginForm.password" prefix-icon="iconfont icon-tianchongxing-" type="password"
-            @keyup.enter.native="login" :show-password="true"></el-input>
-        </el-form-item>
-        <!-- 身份选择 -->
-        <el-form-item prop="role">
-          <el-select v-model="loginForm.role" placeholder="请选择身份" @change="resetLogin">
-            <el-option label="普通用户" value="1"></el-option>
-            <el-option label="图书管理员" value="2"></el-option>
-            <el-option label="图书馆管理员" value="3"></el-option>
-          </el-select>
-        </el-form-item>
+          <!-- 用户名 -->
+          <el-form-item prop="username">
+            <el-input v-model.trim="loginForm.username" prefix-icon="iconfont icon-gerenxinxi"></el-input>
+          </el-form-item>
+          <!-- 密码 -->
+          <el-form-item prop="password">
+            <el-input v-model="loginForm.password" prefix-icon="iconfont icon-tianchongxing-" type="password"
+                      @keyup.enter.native="login" :show-password="true"></el-input>
+          </el-form-item>
+          <!-- 身份选择 -->
+          <el-form-item prop="role">
+            <el-select v-model="loginForm.role" placeholder="请选择身份" @change="resetLogin">
+              <el-option label="普通用户" value="1"></el-option>
+              <el-option label="图书管理员" value="2"></el-option>
+              <el-option label="图书馆管理员" value="3"></el-option>
+            </el-select>
+          </el-form-item>
         <!-- 按钮区域 -->
         <el-form-item class="btns">
           <el-button type="primary" @click="login" :loading="loginLoading">登录</el-button>
@@ -83,7 +83,7 @@ export default {
       //登录表单规则的验证对象
       loginFormRules: {
         username: [
-          { required: true, message: "用户名不能为空", trigger: "blur" },
+          {required: true, message: "用户名不能为空", trigger: "blur"},
           {
             min: 3,
             max: 20,
@@ -92,7 +92,7 @@ export default {
           },
         ],
         password: [
-          { required: true, message: "密码不能为空", trigger: "blur" },
+          {required: true, message: "密码不能为空", trigger: "blur"},
           {
             min: 6,
             max: 15,
@@ -140,12 +140,12 @@ export default {
         const role = this.loginForm.role;
         if (role === '1') {
           //向数据库发送axios请求，如果登录成功，就跳转
-          const { data: res } = await this.$http.post(
-            "user/login",
-            {
-              username,
-              password
-            }
+          const {data: res} = await this.$http.post(
+              "user/login",
+              {
+                username,
+                password
+              }
           );
           if (res.status !== 200) {
             this.loginLoading = false;
@@ -159,7 +159,7 @@ export default {
           this.$router.push("/home"); //跳转到home页面下
         }
         if (role === '2') {
-          const { data: res } = await this.$http.post("bookadmin/login", {
+          const {data: res} = await this.$http.post("bookadmin/login", {
             username,
             password,
           });
@@ -175,12 +175,12 @@ export default {
           this.$router.push("/homemange");
         }
         if (role === '3') {
-          const { data: res } = await this.$http.post(
-            "admin/login",
-            {
-              username,
-              password
-            }
+          const {data: res} = await this.$http.post(
+              "admin/login",
+              {
+                username,
+                password
+              }
           );
           if (res.status !== 200) {
             this.loginLoading = false;

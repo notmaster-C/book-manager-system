@@ -52,6 +52,10 @@ public class Constant {
      */
     public static final String SORT_ORDER_DESC = " descend";
     /**
+     * 默认规则编号
+     */
+    public static final int DEFAULT_RULE_NUMBER = 188;
+    /**
      * BI 模型 id
      */
     public static final long BI_MODEL_ID = 1659171950288818178L;

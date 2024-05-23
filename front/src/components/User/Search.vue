@@ -110,7 +110,7 @@
         <el-table-column label="操作" fixed="right">
           <template slot-scope="scope">
             <!-- 预约按钮 -->
-            <el-tooltip effect="dark" content="预约" placement="top" :enterable="false">
+            <el-tooltip v-if="scope.row.bookStatus==='未借出'" effect="dark" content="预约" placement="top" :enterable="false">
               <el-button type="primary" icon="el-icon-aim" size="mini"
                          @click="showReverseDialog(scope.row.bookNumber)"></el-button>
             </el-tooltip>

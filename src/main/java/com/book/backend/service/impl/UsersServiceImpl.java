@@ -16,6 +16,7 @@ import com.book.backend.pojo.Users;
 import com.book.backend.pojo.dto.UsersDTO;
 import com.book.backend.service.UsersService;
 import com.book.backend.utils.JwtKit;
+import com.book.backend.utils.NumberUtil;
 import org.apache.poi.hpsf.Decimal;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -164,6 +165,53 @@ public class UsersServiceImpl extends ServiceImpl<UsersMapper, Users>
         result.setStatus(200);
         result.add("token", token);
         result.setMsg("登录成功");
+        result.add("id", user.getUserId());
+        return result;
+    }
+    private boolean validate(Users users) {
+        if (StringUtils.isBlank(users.getUsername())) {
+            return false;
+        }
+        if (StringUtils.isBlank(users.getPassword())) {
+            return false;
+        }
+        if (StringUtils.isBlank(users.getCardName())) {
+            return false;
+        }
+
+        return true;
+    }
+    @Override
+    public R register(Users users) {
+
+        // 检查用户名是否为空或null等情况
+        if (!validate(users)) {
+            return R.error("注册失败,信息有误");
+        }
+        // 判断用户是否存在
+        LambdaUpdateWrapper<Users> userWrapper = new LambdaUpdateWrapper<>();
+        userWrapper.eq(Users::getUsername, users.getUsername());
+        Users user = this.getOne(userWrapper);
+        if (user != null) {
+            return R.error("用户名已存在");
+        }
+        String password = DigestUtils.md5DigestAsHex((SALT+users.getPassword()).getBytes());
+        users.setPassword(password);
+        users.setAccountAmt(BigDecimal.ZERO);
+        users.setStatus(Constant.AVAILABLE);
+        users.setCardNumber(Long.parseLong(new String(NumberUtil.getNumber(11))));
+        users.setRuleNumber(Constant.DEFAULT_RULE_NUMBER);
+        boolean save = this.save(users);
+        if (!save){
+            return R.error("注册失败");
+        }
+        // 密码校验成功 生成Token
+        String token = jwtKit.generateToken(user);
+        // 返回成功信息，并将token加入到动态数据map中
+        R result = new R<>();
+        result.setStatus(200);
+        result.add("token", token);
+        result.setMsg("注册成功");
         result.add("id", user.getUserId());
         return result;
     }

@@ -40,7 +40,7 @@ public class UserLoginController {
     @PostMapping("/register")
     @ApiOperation("用户登录")
     public R register(@RequestBody Users users) {
-        return usersService.login(users);
+        return usersService.register(users);
     }
     /**
      * 根据用户id传给用户所需的信息

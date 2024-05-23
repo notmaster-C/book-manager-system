@@ -42,6 +42,13 @@ public interface UsersService extends IService<Users> {
      * @return 返回R通用数据
      */
     R login(Users users);
+
+    /**
+     * 注册
+     * @param users
+     * @return
+     */
+    R register(Users users);
     /**
      * 违章扣款
      *

@@ -85,7 +85,7 @@ public class BooksBorrowServiceImpl extends ServiceImpl<BooksBorrowMapper, Books
         String query = basePage.getQuery();
         if (StringUtils.isBlank(condition) || StringUtils.isBlank(query)) {
             LambdaQueryWrapper<BooksBorrow> queryWrapper1 = new LambdaQueryWrapper<>();
-            queryWrapper1.eq(BooksBorrow::getCardNumber, cardNumber).orderByAsc(BooksBorrow::getCreateTime);
+            queryWrapper1.eq(BooksBorrow::getCardNumber, cardNumber).orderByDesc(BooksBorrow::getCreateTime);
             this.page(pageInfo, queryWrapper1);
             result.setData(pageInfo);
             result.setStatus(200);
@@ -240,7 +240,7 @@ public class BooksBorrowServiceImpl extends ServiceImpl<BooksBorrowMapper, Books
             return result;
         }
         QueryWrapper<BooksBorrow> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.like(condition, query).isNull("return_date").orderByAsc("borrow_date");
+        queryWrapper1.like(condition, query).isNull("return_date").orderByDesc("borrow_date");
         Page<BooksBorrow> page = this.page(pageInfo, queryWrapper1);
         if (page.getTotal() == 0) {
             return R.error("查询不到该还书报表信息");

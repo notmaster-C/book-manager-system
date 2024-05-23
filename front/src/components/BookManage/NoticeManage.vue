@@ -203,13 +203,13 @@ export default {
       this.loading = true;
       const {data:res} = await this.$http.get('bookadmin/get_notice/'+id);
       if(res.status !== 200){
-      
         return this.$message.error(res.msg)
       }
       // console.log(res);
       this.editForm = res.data;
       // 让修改公告的对话框可见
       this.editDialogVisible = true;
+      this.loading = false;
       
     },
     //监听修改对话框的关闭，一旦对话框关闭，就重置表单，回显数据
